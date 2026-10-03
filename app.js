@@ -1,8 +1,9 @@
 /**
- * S. V. T. TAILORS - ESTABLISHED 1965
- * Interactive Web Application & Easy Order Flow
+ * S. V. T. TAILORS - ESTABLISHED 05-01-1965
+ * Interactive Web Application & Bespoke Ordering
  * Location: Eluru Road, near Ram Mandiram, Governorpet, Vijayawada, AP 520002
  * Phone / WhatsApp: +91 98481 33417
+ * Diploma Holders: Y. Subba Rao & Y.B. Srinivas
  */
 
 // Global State
@@ -13,9 +14,7 @@ const SVT_STATE = {
   customizer: {
     garmentId: 'suit-2pc',
     garmentName: 'Bespoke 2-Piece Suit',
-    basePrice: 3800,
     fabricChoice: 'store-wool',
-    fabricPrice: 1800,
     fitType: 'Slim Bespoke Fit',
     collarLapel: 'Notch Lapel',
     cuffPocket: 'Standard 2-Button Cuff',
@@ -31,19 +30,17 @@ const SVT_STATE = {
       inseam: 31
     },
     expressSpeed: false,
-    expressFee: 500,
     notes: ''
   }
 };
 
-// Catalog Garments Data
+// Catalog Garments Data (Exclusive Gents Bespoke Wear)
 const GARMENTS = [
   {
     id: 'suit-2pc',
     title: "Bespoke 2-Piece Classic Suit",
     category: 'suits',
     categoryName: "Men's Suiting",
-    basePrice: 3800,
     leadTime: '5-7 Days',
     image: 'public/images/bespoke_suit.jpg',
     badge: 'Signature Craft',
@@ -56,7 +53,6 @@ const GARMENTS = [
     title: "Artisan Formal & Casual Shirt",
     category: 'shirts',
     categoryName: "Shirts & Trousers",
-    basePrice: 650,
     leadTime: '3-4 Days',
     image: 'public/images/tailored_shirts.jpg',
     badge: 'Popular Choice',
@@ -69,7 +65,6 @@ const GARMENTS = [
     title: "Custom Cut Trousers & Gurkhas",
     category: 'shirts',
     categoryName: "Shirts & Trousers",
-    basePrice: 750,
     leadTime: '3-4 Days',
     image: 'public/images/bespoke_suit.jpg',
     badge: 'Comfort Fit',
@@ -82,12 +77,11 @@ const GARMENTS = [
     title: "Royal Wedding Sherwani & Kurta",
     category: 'ethnic',
     categoryName: "Traditional & Ethnic",
-    basePrice: 4500,
     leadTime: '7-10 Days',
     image: 'public/images/festive_sherwani.jpg',
     badge: 'Wedding Special',
     express: true,
-    desc: 'Magnificent bridal & groom wear featuring regal mandarin collars, handcrafted button plackets, and matching churidar or dhoti.',
+    desc: 'Magnificent groom & celebration wear featuring regal mandarin collars, handcrafted button plackets, and matching churidar or dhoti.',
     features: ['Regal structured fit', 'Custom zari/thread border placement', 'Comfort cotton lining', 'Matching pocket square & stole styling']
   },
   {
@@ -95,7 +89,6 @@ const GARMENTS = [
     title: "Classic South Indian Safari Suit",
     category: 'suits',
     categoryName: "Men's Suiting",
-    basePrice: 2200,
     leadTime: '4-5 Days',
     image: 'public/images/bespoke_suit.jpg',
     badge: 'Timeless Heritage',
@@ -108,7 +101,6 @@ const GARMENTS = [
     title: "Bespoke Nehru & Modi Bundi Jacket",
     category: 'ethnic',
     categoryName: "Traditional & Ethnic",
-    basePrice: 1400,
     leadTime: '3-5 Days',
     image: 'public/images/festive_sherwani.jpg',
     badge: 'Gentleman Classic',
@@ -121,7 +113,6 @@ const GARMENTS = [
     title: "Royal Jodhpuri Bandhgala Suit",
     category: 'suits',
     categoryName: "Men's Suiting",
-    basePrice: 4200,
     leadTime: '6-8 Days',
     image: 'public/images/bespoke_suit.jpg',
     badge: 'Aristocratic Style',
@@ -134,10 +125,9 @@ const GARMENTS = [
     title: "Men's Corporate & Institutional Uniforms",
     category: 'uniforms',
     categoryName: "Uniforms & Bulk",
-    basePrice: 550,
     leadTime: '5-7 Days',
     image: 'public/images/tailor_craft.jpg',
-    badge: 'Bulk Discount',
+    badge: 'Institutional Fit',
     express: false,
     desc: 'High-durability tailored gents uniforms for schools, colleges, security staff, and corporate offices with embroidery support.',
     features: ['Reinforced double stitching', 'Stain-resistant fabric blends', 'Colorfast dye guaranteed', 'Batch sizing & doorstep distribution']
@@ -147,7 +137,6 @@ const GARMENTS = [
     title: "Master Gents Alterations & Re-fitting",
     category: 'uniforms',
     categoryName: "Alterations",
-    basePrice: 200,
     leadTime: '24-48 Hours',
     image: 'public/images/tailor_craft.jpg',
     badge: 'Quick Service',
@@ -159,12 +148,12 @@ const GARMENTS = [
 
 // Fabric Catalog Data
 const FABRICS = [
-  { id: 'bring-own', name: 'I Will Provide My Own Fabric', price: 0, desc: 'Bring cloth to our Governorpet shop or courier/request doorstep pickup' },
-  { id: 'giza-cotton', name: '100% Egyptian Giza Cotton', price: 750, desc: 'Ultra-breathable 80s & 100s two-ply yarn, perfect for shirts & kurtas' },
-  { id: 'store-wool', name: 'Italian Super 120s Wool Blend', price: 1800, desc: 'Wrinkle-resistant luxury drape for two-piece suits and party blazers' },
-  { id: 'pure-linen', name: 'Pure Irish / European Linen', price: 1100, desc: 'Naturally cooling breathable weave for safari suits & summer shirts' },
-  { id: 'raw-silk', name: 'Pure Raw Silk / Brocade', price: 1500, desc: 'Lustrous festive fabric ideal for wedding sherwanis, royal bandhgalas and kurtas' },
-  { id: 'raymond-terry', name: 'Raymond Classic Terry-Rayon', price: 850, desc: 'Durable, crisp everyday formal fabric for trousers and jackets' }
+  { id: 'bring-own', name: 'I Will Provide My Own Fabric', tag: 'Client Fabric', desc: 'Bring cloth to our Governorpet shop or request doorstep pickup in Vijayawada' },
+  { id: 'giza-cotton', name: '100% Egyptian Giza Cotton', tag: 'Luxury Cotton', desc: 'Ultra-breathable 80s & 100s two-ply yarn, perfect for shirts & kurtas' },
+  { id: 'store-wool', name: 'Italian Super 120s Wool Blend', tag: 'Premium Wool', desc: 'Wrinkle-resistant luxury drape for two-piece suits and party blazers' },
+  { id: 'pure-linen', name: 'Pure Irish / European Linen', tag: 'Pure Linen', desc: 'Naturally cooling breathable weave for safari suits & summer shirts' },
+  { id: 'raw-silk', name: 'Pure Raw Silk / Brocade', tag: 'Wedding Silk', desc: 'Lustrous festive fabric ideal for wedding sherwanis, royal bandhgalas and kurtas' },
+  { id: 'raymond-terry', name: 'Raymond Classic Terry-Rayon', tag: 'Everyday Formal', desc: 'Durable, crisp everyday formal fabric for trousers and jackets' }
 ];
 
 // Initialize on DOM load
@@ -199,7 +188,9 @@ function renderCatalog(filter = 'all') {
       <div class="card-content">
         <div class="card-header-row">
           <small style="color: var(--secondary-hover); font-weight: 700; text-transform: uppercase;">${item.categoryName}</small>
-          <div class="card-price">₹${item.basePrice.toLocaleString('en-IN')}<small> stitching</small></div>
+          <div class="card-turnaround" style="color: var(--secondary-hover); font-weight: 700; font-size: 0.8rem; background: var(--secondary-light); padding: 4px 10px; border-radius: 4px;">
+            <i class="fas fa-clock"></i> ${item.leadTime}
+          </div>
         </div>
         <h3>${item.title}</h3>
         <p class="card-desc">${item.desc}</p>
@@ -208,7 +199,7 @@ function renderCatalog(filter = 'all') {
         </ul>
         <div class="card-actions">
           <button class="btn-card-order" onclick="openCustomizerFor('${item.id}')">
-            <img src="public/images/logo_gentleman_badge.png" class="btn-mini-logo" alt="SVT"> Customize & Order
+            <img src="public/images/logo_gentleman_badge.png" class="btn-mini-logo" alt="SVT"> Customize &amp; Order
           </button>
           <button class="btn-card-whatsapp" title="Inquire on WhatsApp" onclick="quickInquiry('${item.title}')">
             <i class="fab fa-whatsapp"></i>
@@ -240,13 +231,12 @@ function setupCustomizer() {
   // Garment selector in customizer
   const garmentSelect = document.getElementById('customizerGarmentSelect');
   if (garmentSelect) {
-    garmentSelect.innerHTML = GARMENTS.map(g => `<option value="${g.id}">${g.title} (From ₹${g.basePrice})</option>`).join('');
+    garmentSelect.innerHTML = GARMENTS.map(g => `<option value="${g.id}">${g.title} (${g.leadTime})</option>`).join('');
     garmentSelect.addEventListener('change', (e) => {
       const g = GARMENTS.find(item => item.id === e.target.value);
       if (g) {
         SVT_STATE.customizer.garmentId = g.id;
         SVT_STATE.customizer.garmentName = g.title;
-        SVT_STATE.customizer.basePrice = g.basePrice;
         updateCustomizerSummary();
       }
     });
@@ -258,7 +248,7 @@ function setupCustomizer() {
     fabricContainer.innerHTML = FABRICS.map(f => `
       <div class="option-box ${f.id === SVT_STATE.customizer.fabricChoice ? 'selected' : ''}" onclick="selectFabric('${f.id}')">
         <span class="title">${f.name}</span>
-        <span class="sub">${f.price === 0 ? 'Included' : '+ ₹' + f.price.toLocaleString('en-IN')}</span>
+        <span class="sub" style="color: var(--secondary-hover); font-weight: 700;">${f.tag}</span>
         <p style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">${f.desc}</p>
       </div>
     `).join('');
@@ -307,7 +297,6 @@ window.selectFabric = function(fabricId) {
   const f = FABRICS.find(item => item.id === fabricId);
   if (!f) return;
   SVT_STATE.customizer.fabricChoice = f.id;
-  SVT_STATE.customizer.fabricPrice = f.price;
 
   const boxes = document.querySelectorAll('#fabricOptionsGrid .option-box');
   boxes.forEach(b => b.classList.remove('selected'));
@@ -323,7 +312,6 @@ window.openCustomizerFor = function(garmentId) {
   if (!g) return;
   SVT_STATE.customizer.garmentId = g.id;
   SVT_STATE.customizer.garmentName = g.title;
-  SVT_STATE.customizer.basePrice = g.basePrice;
 
   const garmentSelect = document.getElementById('customizerGarmentSelect');
   if (garmentSelect) garmentSelect.value = g.id;
@@ -337,37 +325,35 @@ window.openCustomizerFor = function(garmentId) {
   }
 };
 
-// Update Customizer UI summary & total
+// Update Customizer UI summary (No price tags)
 function updateCustomizerSummary() {
   const c = SVT_STATE.customizer;
-  const total = c.basePrice + c.fabricPrice + (c.expressSpeed ? c.expressFee : 0);
 
   const nameEl = document.getElementById('summaryGarmentName');
-  const baseEl = document.getElementById('summaryBasePrice');
   const fabricNameEl = document.getElementById('summaryFabricName');
-  const fabricPriceEl = document.getElementById('summaryFabricPrice');
   const fitEl = document.getElementById('summaryFit');
   const speedEl = document.getElementById('summarySpeed');
-  const speedPriceEl = document.getElementById('summarySpeedPrice');
-  const totalEl = document.getElementById('summaryTotal');
+  const measureTypeEl = document.getElementById('summaryMeasurementType');
 
   if (nameEl) nameEl.textContent = c.garmentName;
-  if (baseEl) baseEl.textContent = `₹${c.basePrice.toLocaleString('en-IN')}`;
   
   const f = FABRICS.find(item => item.id === c.fabricChoice);
   if (fabricNameEl) fabricNameEl.textContent = f ? f.name : 'Standard';
-  if (fabricPriceEl) fabricPriceEl.textContent = c.fabricPrice === 0 ? '₹0 (Own)' : `+ ₹${c.fabricPrice.toLocaleString('en-IN')}`;
   
   if (fitEl) fitEl.textContent = c.fitType;
-  if (speedEl) speedEl.textContent = c.expressSpeed ? '⚡ Tatkal 24-48hr' : 'Standard (5-7 Days)';
-  if (speedPriceEl) speedPriceEl.textContent = c.expressSpeed ? `+ ₹${c.expressFee}` : '₹0';
-  if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+  if (speedEl) speedEl.textContent = c.expressSpeed ? '⚡ Priority Tatkal (24-48hr)' : 'Standard (5-7 Days)';
+
+  if (measureTypeEl) {
+    if (c.measurementType === 'standard') measureTypeEl.textContent = 'Standard Sizing';
+    else if (c.measurementType === 'custom') measureTypeEl.textContent = 'Custom Body Inches';
+    else if (c.measurementType === 'sample') measureTypeEl.textContent = 'Sample Garment Fit';
+    else if (c.measurementType === 'doorstep') measureTypeEl.textContent = 'Doorstep Visit (Vijayawada)';
+  }
 }
 
 // Add Customizer item to Cart
 window.addCustomizerToCart = function() {
   const c = SVT_STATE.customizer;
-  const total = c.basePrice + c.fabricPrice + (c.expressSpeed ? c.expressFee : 0);
 
   // Read current measurements if custom
   let measurementDetail = '';
@@ -396,8 +382,7 @@ window.addCustomizerToCart = function() {
     fit: c.fitType,
     measurements: measurementDetail,
     express: c.expressSpeed,
-    notes: notes,
-    price: total
+    notes: notes
   };
 
   SVT_STATE.cart.push(cartItem);
@@ -418,10 +403,9 @@ function updateCartUI() {
   if (badge) badge.textContent = count;
 
   const itemsContainer = document.getElementById('cartItemsList');
-  const footerTotal = document.getElementById('cartFooterTotal');
-  const total = SVT_STATE.cart.reduce((sum, item) => sum + item.price, 0);
+  const footerCount = document.getElementById('cartFooterCount');
 
-  if (footerTotal) footerTotal.textContent = `₹${total.toLocaleString('en-IN')}`;
+  if (footerCount) footerCount.textContent = `${count} Garment${count !== 1 ? 's' : ''}`;
 
   if (!itemsContainer) return;
 
@@ -430,7 +414,7 @@ function updateCartUI() {
       <div style="text-align: center; padding: 40px 20px; color: var(--gray-600);">
         <i class="fas fa-shopping-bag" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 14px;"></i>
         <h4>Your Order Bag is Empty</h4>
-        <p style="font-size: 0.85rem; margin-top: 6px;">Select a garment from the catalog or customize your bespoke fit above!</p>
+        <p style="font-size: 0.85rem; margin-top: 6px;">Select a gents garment from the catalog or customize your bespoke fit above!</p>
       </div>
     `;
     return;
@@ -442,9 +426,8 @@ function updateCartUI() {
         <h4>${item.title}</h4>
         <p><strong>Fabric:</strong> ${item.fabric}</p>
         <p><strong>Fit & Sizing:</strong> ${item.measurements}</p>
-        ${item.express ? '<p style="color: #b45309; font-weight: 700;">⚡ Tatkal 24-48hr Stitching</p>' : ''}
+        ${item.express ? '<p style="color: #b45309; font-weight: 700;">⚡ Priority Tatkal 24-48hr Stitching</p>' : ''}
         ${item.notes ? `<p style="font-size: 0.75rem; color: #64748b;"><em>"${item.notes}"</em></p>` : ''}
-        <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
       </div>
       <button class="cart-item-remove" onclick="removeCartItem(${idx})" title="Remove item">
         <i class="fas fa-trash-alt"></i>
@@ -477,7 +460,7 @@ window.toggleCartDrawer = function(forceOpen = null) {
   }
 };
 
-// Checkout via WhatsApp
+// Checkout via WhatsApp (Without price tags)
 window.checkoutWhatsApp = function() {
   if (SVT_STATE.cart.length === 0) {
     showToast('Please add garments to your bag first!');
@@ -488,30 +471,26 @@ window.checkoutWhatsApp = function() {
   const customerPhone = document.getElementById('checkoutPhone')?.value.trim() || 'Not Provided';
   const customerArea = document.getElementById('checkoutArea')?.value.trim() || 'Vijayawada';
   const orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
-  const total = SVT_STATE.cart.reduce((sum, item) => sum + item.price, 0);
 
   let msg = `*🧵 NEW BESPOKE ORDER - S. V. T. TAILORS*\n`;
-  msg += `_Eluru Road, Governorpet, Vijayawada_\n`;
+  msg += `_Eluru Road, Near Ram Mandiram, Governorpet, Vijayawada_\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `📋 *Order ID:* #${orderId}\n`;
   msg += `👤 *Customer:* ${customerName}\n`;
   msg += `📞 *Phone:* ${customerPhone}\n`;
   msg += `📍 *Location/Area:* ${customerArea}, Vijayawada\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += `*ITEMS ORDERED:*\n`;
+  msg += `*ITEMS TO TAILOR:*\n`;
 
   SVT_STATE.cart.forEach((item, index) => {
     msg += `\n${index + 1}. *${item.title}*\n`;
     msg += `   • Fabric: ${item.fabric}\n`;
     msg += `   • Fit/Size: ${item.measurements}\n`;
-    if (item.express) msg += `   • Speed: ⚡ Tatkal (24-48 Hours)\n`;
+    if (item.express) msg += `   • Speed: ⚡ Priority Tatkal (24-48 Hours)\n`;
     if (item.notes) msg += `   • Special Instructions: ${item.notes}\n`;
-    msg += `   • Stitching Cost: ₹${item.price.toLocaleString('en-IN')}\n`;
   });
 
   msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += `💰 *TOTAL ESTIMATE: ₹${total.toLocaleString('en-IN')}*\n`;
-  msg += `━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `_Please confirm my tailoring order and advise on fabric drop-off / doorstep measurement._`;
 
   const encodedMsg = encodeURIComponent(msg);
@@ -523,14 +502,13 @@ window.checkoutWhatsApp = function() {
     customerName,
     customerPhone,
     customerArea,
-    total,
     items: [...SVT_STATE.cart]
   });
 
   window.open(waUrl, '_blank');
 };
 
-// Checkout Website Direct (Digital Receipt)
+// Checkout Website Direct (Digital Receipt Summary)
 window.checkoutDirect = function() {
   if (SVT_STATE.cart.length === 0) {
     showToast('Please add garments to your bag first!');
@@ -545,19 +523,17 @@ window.checkoutDirect = function() {
   const customerPhone = phoneInput?.value.trim() || 'N/A';
   const customerArea = areaInput?.value.trim() || 'Governorpet, Vijayawada';
   const orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
-  const total = SVT_STATE.cart.reduce((sum, item) => sum + item.price, 0);
 
   showReceiptModal({
     orderId,
     customerName,
     customerPhone,
     customerArea,
-    total,
     items: [...SVT_STATE.cart]
   });
 };
 
-// Show Receipt Modal
+// Show Receipt Modal (No price tags)
 function showReceiptModal(order) {
   const modalBackdrop = document.getElementById('receiptModalBackdrop');
   const content = document.getElementById('receiptContent');
@@ -571,7 +547,7 @@ function showReceiptModal(order) {
       <i class="fas fa-check"></i>
     </div>
     <div style="text-align: center; margin-bottom: 20px;">
-      <h3 style="font-size: 1.5rem; color: var(--primary);">Tailoring Order Placed!</h3>
+      <h3 style="font-size: 1.5rem; color: var(--primary);">Tailoring Order Logged!</h3>
       <p style="color: var(--secondary-hover); font-weight: 700; letter-spacing: 1px;">ORDER ID: #${order.orderId}</p>
       <small style="color: var(--gray-600);">S. V. T. Tailors • Eluru Road, Governorpet, Vijayawada</small>
     </div>
@@ -586,20 +562,14 @@ function showReceiptModal(order) {
     </div>
 
     <div style="margin-bottom: 20px;">
-      <h4 style="font-size: 0.95rem; margin-bottom: 10px; border-bottom: 1px solid var(--gray-300); padding-bottom: 6px;">Garment Summary</h4>
+      <h4 style="font-size: 0.95rem; margin-bottom: 10px; border-bottom: 1px solid var(--gray-300); padding-bottom: 6px;">Garment Summary (${order.items.length} Item${order.items.length !== 1 ? 's' : ''})</h4>
       ${order.items.map(item => `
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
-          <div>
-            <strong>${item.title}</strong><br>
-            <small style="color: var(--gray-600);">${item.fabric} • ${item.measurements}</small>
-          </div>
-          <span style="font-weight: 700;">₹${item.price.toLocaleString('en-IN')}</span>
+        <div style="font-size: 0.85rem; margin-bottom: 10px; background: #fff; padding: 10px; border: 1px solid var(--gray-300); border-radius: 6px;">
+          <strong style="color: var(--primary); font-size: 0.92rem;">${item.title}</strong><br>
+          <small style="color: var(--gray-600);">${item.fabric} • ${item.measurements}</small>
+          ${item.notes ? `<br><small style="color: #64748b;"><em>Note: ${item.notes}</em></small>` : ''}
         </div>
       `).join('')}
-      <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; border-top: 2px dashed var(--gray-300); padding-top: 10px; margin-top: 10px;">
-        <span>Total Estimated Stitching:</span>
-        <span style="color: var(--primary);">₹${order.total.toLocaleString('en-IN')}</span>
-      </div>
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -607,7 +577,7 @@ function showReceiptModal(order) {
         <i class="fab fa-whatsapp"></i> Chat with Master Tailor on WhatsApp
       </a>
       <button class="btn-secondary-outline" style="color: var(--primary); border-color: var(--primary);" onclick="window.print()">
-        <i class="fas fa-print"></i> Print / Save Digital Bill
+        <i class="fas fa-print"></i> Print / Save Order Summary
       </button>
       <button class="btn-track" style="justify-content: center; width: 100%;" onclick="trackThisOrder('${order.orderId}')">
         <i class="fas fa-search"></i> Track Live Status of #${order.orderId}
@@ -644,7 +614,7 @@ function setupVisualGuideHotspots() {
       tip: 'Pro Tip: For stiff formal Italian collars, keep exact snug measurement. For casual kurtas, add 0.5 inches.'
     },
     'chest': {
-      title: 'Chest & Bust Measurement',
+      title: 'Chest Measurement',
       text: 'Stand naturally. Measure around the fullest part of your chest, keeping the tape level parallel to the floor and snug under the armpits.',
       tip: 'Pro Tip: Do not puff up or suck in your chest. Breathe normally for a natural bespoke silhouette.'
     },
@@ -660,7 +630,7 @@ function setupVisualGuideHotspots() {
     },
     'waist': {
       title: 'Waist & Trouser Belt Line',
-      text: 'Measure around your natural waistline where you prefer wearing trousers or lehenga skirts. Keep one finger between tape and body.',
+      text: 'Measure around your natural waistline where you prefer wearing trousers or safari bottoms. Keep one finger between tape and body.',
       tip: 'Pro Tip: High-rise trousers sit near the belly button; mid-rise sit 1-2 inches below.'
     },
     'inseam': {
@@ -812,7 +782,7 @@ function setupDoorstepForm() {
 
 // Quick WhatsApp Inquiry
 window.quickInquiry = function(garmentName) {
-  const msg = `Hello S. V. T. Tailors, I would like to inquire about stitching *${garmentName}*. Please let me know available slots, fabric suggestions, and turnaround time.`;
+  const msg = `Hello S. V. T. Tailors, I would like to inquire about bespoke stitching for *${garmentName}*. Please let me know available slots, fabric suggestions, and turnaround time.`;
   window.open(`https://wa.me/${SVT_STATE.phone}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
