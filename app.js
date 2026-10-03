@@ -126,7 +126,7 @@ const GARMENTS = [
     category: 'uniforms',
     categoryName: "Uniforms & Bulk",
     leadTime: '5-7 Days',
-    image: 'public/images/tailor_craft.jpg',
+    image: 'public/images/corporate_institutional_uniforms.jpg',
     badge: 'Institutional Fit',
     express: false,
     desc: 'High-durability tailored gents uniforms for schools, colleges, security staff, and corporate offices with embroidery support.',
