@@ -102,7 +102,7 @@ const GARMENTS = [
     category: 'ethnic',
     categoryName: "Traditional & Ethnic",
     leadTime: '3-5 Days',
-    image: 'public/images/festive_sherwani.jpg',
+    image: 'public/images/bespoke_modi_bundi_jacket.jpg',
     badge: 'Gentleman Classic',
     express: true,
     desc: 'Mandarin collar sleeveless vest / waist-coat crafted in pure raw silk, linen, or fine wool. Worn with pride over kurtas or formal shirts.',
@@ -748,35 +748,59 @@ function saveOrderForTracking(order) {
   localStorage.setItem('svt_orders', JSON.stringify(existing.slice(0, 10)));
 }
 
-// Doorstep Measurement Form in Vijayawada
+// Doorstep Measurement Form in Vijayawada & Outstation
 function setupDoorstepForm() {
   const form = document.getElementById('doorstepForm');
   if (!form) return;
+
+  const areaSelect = document.getElementById('dsArea');
+  const otherGroup = document.getElementById('dsOtherAreaGroup');
+  const otherInput = document.getElementById('dsOtherAreaInput');
+
+  if (areaSelect && otherGroup) {
+    areaSelect.addEventListener('change', () => {
+      const isOther = areaSelect.value.startsWith('Other');
+      otherGroup.style.display = isOther ? 'block' : 'none';
+      if (isOther && otherInput) {
+        otherInput.focus();
+      }
+    });
+  }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('dsName').value.trim();
     const phone = document.getElementById('dsPhone').value.trim();
     const area = document.getElementById('dsArea').value;
+    const isOutstation = area.startsWith('Other');
+    const specificLoc = otherInput ? otherInput.value.trim() : '';
     const date = document.getElementById('dsDate').value;
     const time = document.getElementById('dsTime').value;
     const garments = document.getElementById('dsGarments').value.trim();
 
-    let text = `*🛵 DOORSTEP MEASUREMENT BOOKING - S. V. T. TAILORS*\n`;
+    let text = `*🛵 DOORSTEP & HOME VISIT BOOKING - S. V. T. TAILORS*\n`;
     text += `━━━━━━━━━━━━━━━━━━━━\n`;
     text += `👤 *Client Name:* ${name}\n`;
     text += `📞 *Phone:* ${phone}\n`;
-    text += `📍 *Vijayawada Locality:* ${area}\n`;
+    if (isOutstation) {
+      text += `🚀 *Service Type:* Outstation / Far From City Client\n`;
+      text += `📍 *Town / Area / Landmark:* ${specificLoc || 'Outside Vijayawada'}\n`;
+    } else {
+      text += `📍 *Vijayawada Locality:* ${area}\n`;
+    }
     text += `📅 *Preferred Date:* ${date}\n`;
     text += `⏰ *Preferred Slot:* ${time}\n`;
     text += `👔 *Garments to Stitch:* ${garments}\n`;
     text += `━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `_Please confirm appointment for master tailor home visit._`;
+    text += isOutstation 
+      ? `_Requesting master tailor outstation appointment or video measurement session._`
+      : `_Please confirm appointment for master tailor home visit._`;
 
     const waUrl = `https://wa.me/${SVT_STATE.phone}?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
-    showToast('Doorstep measurement visit requested! Opening WhatsApp...');
+    showToast('Home visit booking requested! Opening WhatsApp...');
     form.reset();
+    if (otherGroup) otherGroup.style.display = 'none';
   });
 }
 

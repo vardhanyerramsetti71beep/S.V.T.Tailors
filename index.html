@@ -566,7 +566,7 @@
               <input type="tel" id="dsPhone" placeholder="e.g. 98481 XXXXX" required>
             </div>
             <div class="form-group">
-              <label for="dsArea">Vijayawada Locality</label>
+              <label for="dsArea">Your Locality / City</label>
               <select id="dsArea" required>
                 <option value="Governorpet / Eluru Road">Governorpet / Eluru Road</option>
                 <option value="Arundalpet / Ram Mandiram">Arundalpet / Near Ram Mandiram</option>
@@ -579,8 +579,18 @@
                 <option value="Bhavanipuram / One Town">Bhavanipuram / One Town</option>
                 <option value="Penamaluru / Poranki">Penamaluru / Poranki</option>
                 <option value="Mangalagiri / Tadepalli">Mangalagiri / Tadepalli</option>
-                <option value="Other Vijayawada Locality">Other Vijayawada Locality</option>py
+                <option value="Other / Far from City (Outside Vijayawada)">Other / Far from City (Guntur, Tenali, Gannavaram, Eluru, etc.)</option>
               </select>
+            </div>
+            <div class="form-group" id="dsOtherAreaGroup" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px;">
+              <label for="dsOtherAreaInput" style="color: #166534; font-weight: 700; display: block; margin-bottom: 6px;">
+                <i class="fas fa-map-marked-alt"></i> Specify Your City / Town / Village &amp; Landmark:
+              </label>
+              <input type="text" id="dsOtherAreaInput" placeholder="e.g. Guntur, Gannavaram, Mangalagiri, Tenali, Eluru, or Village name" style="width: 100%; padding: 10px; border: 1.5px solid #bbf7d0; border-radius: var(--radius-sm); margin-bottom: 6px;">
+              <small style="color: #15803d; display: flex; align-items: center; gap: 6px; line-height: 1.4;">
+                <i class="fas fa-info-circle"></i>
+                <span><strong>Outstation Service Available:</strong> For clients living far from the city, our master tailor arranges special scheduled outstation visits, video measurement sessions, or sample courier fitting!</span>
+              </small>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
               <div class="form-group">
