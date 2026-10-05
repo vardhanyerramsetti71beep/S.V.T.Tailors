@@ -460,8 +460,26 @@ window.toggleCartDrawer = function(forceOpen = null) {
   }
 };
 
+// Helper to save order/booking to MySQL backend
+async function syncBookingToDB(payload) {
+  try {
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (err) {
+    console.log('[API Notice] DB sync queued locally or server offline:', err);
+  }
+  return null;
+}
+
 // Checkout via WhatsApp (Without price tags)
-window.checkoutWhatsApp = function() {
+window.checkoutWhatsApp = async function() {
   if (SVT_STATE.cart.length === 0) {
     showToast('Please add garments to your bag first!');
     return;
@@ -470,7 +488,30 @@ window.checkoutWhatsApp = function() {
   const customerName = document.getElementById('checkoutName')?.value.trim() || 'Valued Customer';
   const customerPhone = document.getElementById('checkoutPhone')?.value.trim() || 'Not Provided';
   const customerArea = document.getElementById('checkoutArea')?.value.trim() || 'Vijayawada';
-  const orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
+  let orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
+
+  // Sync with MySQL database
+  if (customerPhone && customerPhone !== 'Not Provided') {
+    const garmentsSummary = SVT_STATE.cart.map(i => `${i.title} (${i.fabric}, ${i.measurements})`).join('; ');
+    const stdSize = document.getElementById('standardSizeSelect')?.value;
+    const chest = document.getElementById('inputChest')?.value;
+    const waist = document.getElementById('inputWaist')?.value;
+
+    const dbRes = await syncBookingToDB({
+      name: customerName,
+      mobile: customerPhone,
+      locality: customerArea,
+      pref_date: new Date().toISOString().split('T')[0],
+      pref_time: '10:00:00',
+      garnments: garmentsSummary,
+      shirt_size: stdSize || (chest ? `Chest ${chest}"` : null),
+      pant_size: waist ? `Waist ${waist}"` : null
+    });
+
+    if (dbRes && dbRes.booking_id) {
+      orderId = `SVT-BK${dbRes.booking_id}`;
+    }
+  }
 
   let msg = `*🧵 NEW BESPOKE ORDER - S. V. T. TAILORS*\n`;
   msg += `_Eluru Road, Near Ram Mandiram, Governorpet, Vijayawada_\n`;
@@ -509,7 +550,7 @@ window.checkoutWhatsApp = function() {
 };
 
 // Checkout Website Direct (Digital Receipt Summary)
-window.checkoutDirect = function() {
+window.checkoutDirect = async function() {
   if (SVT_STATE.cart.length === 0) {
     showToast('Please add garments to your bag first!');
     return;
@@ -522,7 +563,30 @@ window.checkoutDirect = function() {
   const customerName = nameInput?.value.trim() || 'Valued Customer';
   const customerPhone = phoneInput?.value.trim() || 'N/A';
   const customerArea = areaInput?.value.trim() || 'Governorpet, Vijayawada';
-  const orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
+  let orderId = 'SVT-' + Math.floor(1000 + Math.random() * 9000);
+
+  // Sync to database
+  if (customerPhone && customerPhone !== 'N/A') {
+    const garmentsSummary = SVT_STATE.cart.map(i => `${i.title} (${i.fabric}, ${i.measurements})`).join('; ');
+    const stdSize = document.getElementById('standardSizeSelect')?.value;
+    const chest = document.getElementById('inputChest')?.value;
+    const waist = document.getElementById('inputWaist')?.value;
+
+    const dbRes = await syncBookingToDB({
+      name: customerName,
+      mobile: customerPhone,
+      locality: customerArea,
+      pref_date: new Date().toISOString().split('T')[0],
+      pref_time: '10:00:00',
+      garnments: garmentsSummary,
+      shirt_size: stdSize || (chest ? `Chest ${chest}"` : null),
+      pant_size: waist ? `Waist ${waist}"` : null
+    });
+
+    if (dbRes && dbRes.booking_id) {
+      orderId = `SVT-BK${dbRes.booking_id}`;
+    }
+  }
 
   showReceiptModal({
     orderId,
@@ -681,7 +745,7 @@ window.trackThisOrder = function(orderId) {
   }
 };
 
-function runTracking(id) {
+async function runTracking(id) {
   const resultBox = document.getElementById('trackResultBox');
   if (!resultBox) return;
 
@@ -690,30 +754,58 @@ function runTracking(id) {
     return;
   }
 
-  // Check saved orders or mock demo
+  // Attempt to fetch live booking details from MySQL database
+  let dbBooking = null;
+  try {
+    const res = await fetch(`/api/track?q=${encodeURIComponent(id)}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.bookings && json.bookings.length > 0) {
+        dbBooking = json.bookings[0];
+      }
+    }
+  } catch (e) {
+    console.log('[Track Notice] Server offline, using local tracker mode:', e);
+  }
+
   const isDemo = id.toUpperCase() === 'SVT-1965' || id.toUpperCase() === 'SVT-7821';
-  const stage = isDemo ? 3 : 2; // stage 1 to 5
+  const stage = dbBooking ? 2 : (isDemo ? 3 : 2); // stage 1 to 5
 
   const steps = [
-    { title: 'Order Logged', date: 'Same Day' },
+    { title: 'Order Logged', date: dbBooking ? (dbBooking.pref_date || 'Day 0') : 'Same Day' },
     { title: 'Fabric Cut', date: 'Day 1' },
     { title: 'Master Stitch', date: 'Day 2-3' },
     { title: 'Steam Press', date: 'Day 4' },
     { title: 'Ready for You', date: 'Day 5' }
   ];
 
+  const clientName = dbBooking ? dbBooking.name : 'Valued Client';
+  const displayId = dbBooking ? `SVT-BK${dbBooking.booking_id}` : id.toUpperCase();
+  const garments = dbBooking ? dbBooking.garnments : null;
+  const locality = dbBooking ? dbBooking.locality : null;
+  const sizes = dbBooking && (dbBooking.shirt_size || dbBooking.pant_size) 
+    ? `Shirt: ${dbBooking.shirt_size || 'Custom'}, Pant: ${dbBooking.pant_size || 'Custom'}`
+    : null;
+
   resultBox.style.display = 'block';
   resultBox.innerHTML = `
     <div style="border-top: 1px solid var(--gray-300); padding-top: 24px; margin-top: 20px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
         <div>
-          <h4 style="font-size: 1.15rem; color: var(--primary);">Tracking Order #${id.toUpperCase()}</h4>
-          <p style="font-size: 0.85rem; color: var(--emerald); font-weight: 700;">
+          <h4 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 4px;">
+            Tracking Order #${displayId}
+          </h4>
+          <p style="font-size: 0.88rem; color: var(--gray-700); margin-bottom: 2px;">
+            👤 <strong>Customer:</strong> ${clientName} ${locality ? `• 📍 ${locality}` : ''}
+          </p>
+          ${garments ? `<p style="font-size: 0.82rem; color: var(--gray-600); margin-bottom: 2px;">👔 <strong>Garments:</strong> ${garments}</p>` : ''}
+          ${sizes ? `<p style="font-size: 0.82rem; color: var(--secondary-hover); font-weight: 600;">📏 <strong>Recorded Measurements:</strong> ${sizes}</p>` : ''}
+          <p style="font-size: 0.85rem; color: var(--emerald); font-weight: 700; margin-top: 4px;">
             <i class="fas fa-spinner fa-spin"></i> Active at Governorpet Atelier
           </p>
         </div>
-        <a href="https://wa.me/${SVT_STATE.phone}?text=Status%20update%20for%20order%20${id}" target="_blank" class="btn-track" style="font-size: 0.8rem;">
-          <i class="fab fa-whatsapp"></i> Inquire Status
+        <a href="https://wa.me/${SVT_STATE.phone}?text=Status%20update%20for%20order%20${displayId}" target="_blank" class="btn-track" style="font-size: 0.8rem;">
+          <i class="fab fa-whatsapp"></i> Inquire on WhatsApp
         </a>
       </div>
 
@@ -736,7 +828,7 @@ function runTracking(id) {
       </div>
 
       <div style="background: var(--cream); border-radius: var(--radius-sm); padding: 14px; margin-top: 24px; font-size: 0.85rem; color: var(--gray-700);">
-        <strong>Master Tailor Note:</strong> Garment is currently aligned on cutting pattern. Hand-stitching lapels & interlining in progress. Estimated delivery on schedule!
+        <strong>Master Tailor Note:</strong> Pattern cutting &amp; fabric alignment confirmed for ${clientName}. Hand-finishing in progress under Master Sri Subba Rao garu. Delivery scheduled on time!
       </div>
     </div>
   `;
@@ -767,19 +859,35 @@ function setupDoorstepForm() {
     });
   }
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('dsName').value.trim();
     const phone = document.getElementById('dsPhone').value.trim();
     const area = document.getElementById('dsArea').value;
     const isOutstation = area.startsWith('Other');
     const specificLoc = otherInput ? otherInput.value.trim() : '';
+    const locality = isOutstation ? (specificLoc || 'Outside Vijayawada') : area;
     const date = document.getElementById('dsDate').value;
     const time = document.getElementById('dsTime').value;
     const garments = document.getElementById('dsGarments').value.trim();
 
+    // Sync with MySQL database
+    let bookingRef = '';
+    const dbRes = await syncBookingToDB({
+      name: name,
+      mobile: phone,
+      locality: locality,
+      pref_date: date,
+      pref_time: time,
+      garnments: garments
+    });
+    if (dbRes && dbRes.booking_id) {
+      bookingRef = `#SVT-BK${dbRes.booking_id}`;
+    }
+
     let text = `*🛵 DOORSTEP & HOME VISIT BOOKING - S. V. T. TAILORS*\n`;
     text += `━━━━━━━━━━━━━━━━━━━━\n`;
+    if (bookingRef) text += `📋 *Booking ID:* ${bookingRef}\n`;
     text += `👤 *Client Name:* ${name}\n`;
     text += `📞 *Phone:* ${phone}\n`;
     if (isOutstation) {
@@ -798,7 +906,7 @@ function setupDoorstepForm() {
 
     const waUrl = `https://wa.me/${SVT_STATE.phone}?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
-    showToast('Home visit booking requested! Opening WhatsApp...');
+    showToast(bookingRef ? `Booking ${bookingRef} saved to database! Opening WhatsApp...` : 'Home visit booking requested! Opening WhatsApp...');
     form.reset();
     if (otherGroup) otherGroup.style.display = 'none';
   });

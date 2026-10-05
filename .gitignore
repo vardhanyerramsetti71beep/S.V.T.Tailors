@@ -1,1 +1,4 @@
 .vercel
+local_bookings.json
+db_config.json
+__pycache__/
