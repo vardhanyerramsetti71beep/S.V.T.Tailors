@@ -167,7 +167,39 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   setupMobileMenu();
   setupNavScroll();
+  setupAuthSession();
 });
+
+// Setup Logged In User State across website
+function setupAuthSession() {
+  const savedUser = localStorage.getItem('svt_user');
+  if (!savedUser) return;
+
+  try {
+    const user = JSON.parse(savedUser);
+    const navText = document.getElementById('navAccountText');
+    if (navText) {
+      const firstName = (user.name || '').split(' ')[0] || 'My Account';
+      navText.textContent = `Hi, ${firstName}`;
+    }
+
+    // Prefill Doorstep Form
+    const dsName = document.getElementById('dsName');
+    const dsPhone = document.getElementById('dsPhone');
+    if (dsName && !dsName.value) dsName.value = user.name || '';
+    if (dsPhone && !dsPhone.value) dsPhone.value = user.mobile || '';
+
+    // Prefill Cart Drawer Form
+    const chkName = document.getElementById('checkoutName');
+    const chkPhone = document.getElementById('checkoutPhone');
+    const chkArea = document.getElementById('checkoutArea');
+    if (chkName && !chkName.value) chkName.value = user.name || '';
+    if (chkPhone && !chkPhone.value) chkPhone.value = user.mobile || '';
+    if (chkArea && !chkArea.value && user.locality) chkArea.value = user.locality;
+  } catch (e) {
+    console.log('Auth session parse notice:', e);
+  }
+}
 
 // Render Catalog Grid
 function renderCatalog(filter = 'all') {

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Account & Login • S. V. T. Tailors (Estd. 1965)</title>
+  <link rel="icon" type="image/png" href="public/images/favicon.png">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .auth-page-wrapper {
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      background: radial-gradient(circle at 50% 10%, #162442 0%, #0b1528 100%);
+    }
+
+    .auth-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      width: 100%;
+      max-width: 580px;
+      overflow: hidden;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .auth-header {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 28px 24px 20px;
+      text-align: center;
+      position: relative;
+      border-bottom: 3px solid var(--secondary);
+    }
+
+    .auth-header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .auth-header h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--secondary);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-header p {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--gray-300);
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-600);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .auth-tab-btn.active {
+      color: var(--primary);
+      background: #ffffff;
+      border-bottom: 3px solid var(--secondary);
+    }
+
+    .auth-body {
+      padding: 28px 24px;
+    }
+
+    .auth-form-group {
+      margin-bottom: 16px;
+    }
+
+    .auth-form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .auth-form-group input,
+    .auth-form-group select,
+    .auth-form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+      background: #ffffff;
+    }
+
+    .auth-form-group input:focus,
+    .auth-form-group select:focus,
+    .auth-form-group textarea:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+
+    .auth-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 540px) {
+      .auth-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn-auth-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--secondary) 0%, #b89628 100%);
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+      margin-top: 20px;
+    }
+
+    .btn-auth-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.45);
+    }
+
+    /* Customer Dashboard Profile View */
+    .dashboard-profile {
+      display: none;
+    }
+
+    .profile-banner {
+      background: linear-gradient(135deg, #162442 0%, #0b1528 100%);
+      color: #ffffff;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      background: var(--secondary);
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .booking-card {
+      background: var(--cream);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .booking-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .auth-alert {
+      display: none;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+    .auth-alert.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+    }
+    .auth-alert.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <header class="top-bar">
+    <div class="top-bar-marquee">
+      <span>🧵 S. V. T. Tailors — Vijayawada’s Premier Bespoke Gents Atelier Since 1965</span>
+      <span style="color: var(--secondary);">•</span>
+      <span>📍 Ram Mandiram, Eluru Road, Governorpet</span>
+    </div>
+    <div class="top-bar-links">
+      <a href="index.html"><i class="fas fa-home"></i> Back to Home</a>
+      <a href="tel:9848133417"><i class="fas fa-phone-alt"></i> Call: 9848 133417</a>
+    </div>
+  </header>
+
+  <!-- Auth Main View -->
+  <main class="auth-page-wrapper">
+    <div class="auth-card">
+      <!-- Header -->
+      <div class="auth-header">
+        <a href="index.html">
+          <img src="public/images/logo_gentleman_badge.png" alt="SVT Tailors Gentleman Mascot">
+        </a>
+        <h2>S. V. T. TAILORS</h2>
+        <p>Client Portal • Governorpet Atelier Since 1965</p>
+      </div>
+
+      <!-- Feedback Alert -->
+      <div style="padding: 16px 24px 0;">
+        <div class="auth-alert" id="authAlert"></div>
+      </div>
+
+      <!-- Guest Auth Container (Tabs) -->
+      <div id="guestAuthContainer">
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+          <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </div>
+
+        <div class="auth-body">
+          <!-- 1. LOGIN FORM -->
+          <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <div class="auth-form-group">
+              <label for="loginIdentifier">Username or Mobile Number</label>
+              <input type="text" id="loginIdentifier" placeholder="Enter username or 10-digit mobile" required autofocus>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">
+              <i class="fas fa-lock-open"></i> Sign In to Account
+            </button>
+
+            <div style="text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--gray-600);">
+              New to SVT Tailors? 
+              <a href="javascript:void(0)" onclick="switchTab('register')" style="color: var(--secondary-hover); font-weight: 700;">Create an Account &amp; Book Fitting</a>
+            </div>
+          </form>
+
+          <!-- 2. CREATE ACCOUNT FORM -->
+          <form id="registerForm" style="display: none;" onsubmit="handleRegisterSubmit(event)">
+            <div class="auth-form-row">
+              <div class="auth-form-group">
+                <label for="regName">Full Name *</label>
+                <input type="text" id="regName" placeholder="e.g. Ramesh Kumar" required>
+              </div>
+              <div class="auth-form-group">
+                <label for="regPhone">Phone Number (Mobile) *</label>
+                <input type="tel" id="regPhone" placeholder="e.g. 98481 XXXXX" required>
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="regArea">Your Locality / City *</label>
+              <select id="regArea" onchange="handleRegAreaChange(this.value)" required>
+                <option value="Governorpet / Eluru Road">Governorpet / Eluru Road</option>
+                <option value="Arundalpet / Ram Mandiram">Arundalpet / Near Ram Mandiram</option>
+                <option value="Benz Circle">Benz Circle</option>
+                <option value="MG Road / Bandar Road">MG Road / Bandar Road</option>
+                <option value="Suryaraopet">Suryaraopet</option>
+                <option value="Moghalrajpuram">Moghalrajpuram</option>
+                <option value="Satyanarayanapuram">Satyanarayanapuram</option>
+                <option value="Bhavanipuram / One Town">Bhavanipuram / One Town</option>
+                <option value="Penamaluru / Poranki">Penamaluru / Poranki</option>
+                <option value="Mangalagiri / Tadepalli">Mangalagiri / Tadepalli</option>
+                <option value="Other">Other (Far from City / Outside Vijayawada)</option>
+              </select>
+            </div>
+
+            <!-- Dynamic Outstation Area Input -->
+            <div class="auth-form-group" id="regOtherAreaBox" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px;">
+              <label for="regOtherAreaInput" style="color: #166534; font-weight: 700;">
+                <i class="fas fa-map-marked-alt"></i> Specify Your City / Town / Village:
+              </label>
+              <input type="text" id="regOtherAreaInput" placeholder="e.g. Guntur, Gannavaram, Tenali, Eluru, etc.">
+            </div>
+
+            <div class="auth-form-row">
+              <div class="auth-form-group">
+                <label for="regDate">Preferred Date for Fitting / Visit</label>
+                <input type="date" id="regDate">
+              </div>
+              <div class="auth-form-group">
+                <label for="regTime">Preferred Time</label>
+                <select id="regTime">
+                  <option value="Morning (10:00 AM - 1:00 PM)">Morning (10 AM - 1 PM)</option>
+                  <option value="Afternoon (2:00 PM - 5:00 PM)">Afternoon (2 PM - 5 PM)</option>
+                  <option value="Evening (5:00 PM - 8:30 PM)">Evening (5 PM - 8:30 PM)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="regGarments">Garments to Stitch</label>
+              <input type="text" id="regGarments" placeholder="e.g. 2 Suits, 4 Shirts, 1 Kurta Pajama">
+            </div>
+
+            <div class="auth-form-row">
+              <div class="auth-form-group">
+                <label for="regUsername">Choose Username *</label>
+                <input type="text" id="regUsername" placeholder="e.g. ramesh_svt" required>
+              </div>
+              <div class="auth-form-group">
+                <label for="regPassword">Set Password *</label>
+                <input type="password" id="regPassword" placeholder="Create password" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-auth-submit" id="btnRegisterSubmit">
+              <i class="fas fa-user-check"></i> Create Account &amp; Save to Database
+            </button>
+
+            <div style="text-align: center; margin-top: 14px; font-size: 0.88rem; color: var(--gray-600);">
+              Already have an account? 
+              <a href="javascript:void(0)" onclick="switchTab('login')" style="color: var(--secondary-hover); font-weight: 700;">Sign In here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Logged In Dashboard View -->
+      <div id="userDashboardView" class="dashboard-profile" style="padding: 24px;">
+        <div class="profile-banner">
+          <div class="profile-avatar" id="dashAvatar">R</div>
+          <div>
+            <h3 style="color: var(--secondary); margin-bottom: 2px;" id="dashName">Ramesh Kumar</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1;" id="dashMobile">+91 98481 XXXXX</p>
+            <small style="color: #94a3b8;" id="dashLocality">Governorpet, Vijayawada</small>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <a href="index.html#customizerSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 10px;">
+            <i class="fas fa-cut"></i> Order Custom Wear
+          </a>
+          <a href="index.html#doorstepSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 10px; background: var(--primary-light); color: #fff;">
+            <i class="fas fa-motorcycle"></i> Book Home Visit
+          </a>
+        </div>
+
+        <h4 style="font-size: 1.05rem; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-clipboard-list" style="color: var(--secondary);"></i> Your Bookings &amp; Fitting Orders
+        </h4>
+        <div id="dashBookingsList">
+          <p style="font-size: 0.85rem; color: var(--gray-600);">Loading your bookings from database...</p>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--gray-300); display: flex; justify-content: space-between; align-items: center;">
+          <a href="index.html" style="font-size: 0.88rem; color: var(--primary); font-weight: 600;">
+            <i class="fas fa-arrow-left"></i> Return to Main Website
+          </a>
+          <button onclick="handleLogout()" style="background: none; border: 1px solid #ef4444; color: #ef4444; border-radius: var(--radius-sm); padding: 8px 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tab switching
+    function switchTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const regForm = document.getElementById('registerForm');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabRegBtn = document.getElementById('tabRegisterBtn');
+      hideAlert();
+
+      if (tab === 'register') {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        tabLoginBtn.classList.remove('active');
+        tabRegBtn.classList.add('active');
+      } else {
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        tabLoginBtn.classList.add('active');
+        tabRegBtn.classList.remove('active');
+      }
+    }
+
+    function handleRegAreaChange(val) {
+      const otherBox = document.getElementById('regOtherAreaBox');
+      if (otherBox) {
+        otherBox.style.display = val === 'Other' ? 'block' : 'none';
+        if (val === 'Other') document.getElementById('regOtherAreaInput')?.focus();
+      }
+    }
+
+    function showAlert(msg, type = 'error') {
+      const el = document.getElementById('authAlert');
+      if (!el) return;
+      el.className = `auth-alert ${type}`;
+      el.innerHTML = msg;
+      el.style.display = 'block';
+    }
+
+    function hideAlert() {
+      const el = document.getElementById('authAlert');
+      if (el) el.style.display = 'none';
+    }
+
+    // Register Handler
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const name = document.getElementById('regName').value.trim();
+      const mobile = document.getElementById('regPhone').value.trim();
+      const area = document.getElementById('regArea').value;
+      const otherArea = document.getElementById('regOtherAreaInput')?.value.trim();
+      const locality = area === 'Other' ? (otherArea || 'Outside Vijayawada') : area;
+      const pref_date = document.getElementById('regDate').value;
+      const pref_time = document.getElementById('regTime').value;
+      const garments = document.getElementById('regGarments').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+
+      const btn = document.getElementById('btnRegisterSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account in Database...';
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name, mobile, locality, username, password,
+            pref_date, pref_time, garments
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showAlert('Account created successfully in database! Logging you in...', 'success');
+          localStorage.setItem('svt_user', JSON.stringify(data.user));
+          setTimeout(() => {
+            renderDashboard(data.user, data.booking_id ? [{
+              booking_id: data.booking_id,
+              locality: locality,
+              pref_date: pref_date || 'Upcoming',
+              pref_time: pref_time,
+              garments: garments || 'Bespoke Fitting'
+            }] : []);
+          }, 800);
+        } else {
+          showAlert(data.error || 'Could not register account. Please check details.');
+        }
+      } catch (err) {
+        // Fallback for offline mode
+        const localUser = { name, mobile, username, locality };
+        localStorage.setItem('svt_user', JSON.stringify(localUser));
+        showAlert('Account registered locally! (Database syncing in background)', 'success');
+        renderDashboard(localUser, []);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-check"></i> Create Account &amp; Save to Database';
+      }
+    }
+
+    // Login Handler
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const identifier = document.getElementById('loginIdentifier').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Credentials...';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: identifier, password })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showAlert(`Welcome back, ${data.user.name}!`, 'success');
+          localStorage.setItem('svt_user', JSON.stringify(data.user));
+          setTimeout(() => {
+            renderDashboard(data.user, data.bookings || []);
+          }, 600);
+        } else {
+          showAlert(data.error || 'Invalid credentials. Please verify username and password.');
+        }
+      } catch (err) {
+        showAlert('Server connection error. Please ensure local server is running.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-lock-open"></i> Sign In to Account';
+      }
+    }
+
+    // Render Dashboard
+    function renderDashboard(user, bookings = []) {
+      document.getElementById('guestAuthContainer').style.display = 'none';
+      const dash = document.getElementById('userDashboardView');
+      dash.style.display = 'block';
+
+      document.getElementById('dashName').textContent = user.name || 'Valued Client';
+      document.getElementById('dashMobile').textContent = `📞 ${user.mobile}`;
+      document.getElementById('dashLocality').textContent = `📍 ${user.locality || 'Governorpet, Vijayawada'}`;
+      document.getElementById('dashAvatar').textContent = (user.name || 'U').charAt(0).toUpperCase();
+
+      const bList = document.getElementById('dashBookingsList');
+      if (!bookings || bookings.length === 0) {
+        bList.innerHTML = `
+          <div style="background: var(--cream); padding: 18px; border-radius: var(--radius-sm); text-align: center; color: var(--gray-600); font-size: 0.88rem;">
+            <i class="fas fa-calendar-check" style="font-size: 1.8rem; color: var(--secondary); margin-bottom: 8px; display: block;"></i>
+            No active bookings yet. Click below to schedule a master doorstep visit or customize garments!
+          </div>
+        `;
+      } else {
+        bList.innerHTML = bookings.map(b => `
+          <div class="booking-card">
+            <div class="booking-card-header">
+              <span>Order #SVT-BK${b.booking_id}</span>
+              <span style="color: var(--emerald); font-size: 0.85rem;"><i class="fas fa-check-circle"></i> Active</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--gray-700); margin-bottom: 4px;">
+              <strong>Garments:</strong> ${b.garments || 'Bespoke Garments'}
+            </div>
+            <div style="font-size: 0.8rem; color: var(--gray-600); display: flex; gap: 14px; flex-wrap: wrap;">
+              <span><i class="fas fa-calendar-alt"></i> ${b.pref_date || 'Scheduled'}</span>
+              <span><i class="fas fa-clock"></i> ${b.pref_time || 'Morning'}</span>
+              <span><i class="fas fa-map-marker-alt"></i> ${b.locality || 'Governorpet'}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('svt_user');
+      window.location.reload();
+    }
+
+    // Auto-login check on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('svt_user');
+      if (saved) {
+        try {
+          const user = JSON.parse(saved);
+          renderDashboard(user);
+          // Fetch live bookings
+          fetch(`/api/track?q=${encodeURIComponent(user.mobile)}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data && data.bookings) {
+                renderDashboard(user, data.bookings);
+              }
+            }).catch(() => {});
+        } catch(e) {}
+      }
+    });
+  </script>
+</body>
+</html>

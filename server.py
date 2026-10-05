@@ -91,7 +91,81 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if self.path == '/api/bookings':
+        if self.path == '/api/register':
+            content_length = int(self.headers.get('Content-Length', 0))
+            raw_body = self.rfile.read(content_length)
+            try:
+                data = json.loads(raw_body.decode('utf-8'))
+            except Exception as e:
+                return self.send_json(400, {"success": False, "error": f"Invalid JSON: {e}"})
+
+            name = data.get('name', 'Valued Customer')
+            mobile = data.get('mobile', '')
+            locality = data.get('locality', 'Governorpet, Vijayawada')
+            username = data.get('username', '')
+            password = data.get('password', '')
+            pref_date = data.get('pref_date', '')
+            pref_time = data.get('pref_time', '')
+            garments = data.get('garments') or data.get('garnments') or ''
+            shirt_size = data.get('shirt_size')
+            pant_size = data.get('pant_size')
+
+            try:
+                res = db.register_user(
+                    name=name,
+                    mobile=mobile,
+                    locality=locality,
+                    username=username,
+                    password=password,
+                    pref_date=pref_date,
+                    pref_time=pref_time,
+                    garments=garments,
+                    shirt_size=shirt_size,
+                    pant_size=pant_size
+                )
+                status_code = 200 if res.get('success') else 400
+                return self.send_json(status_code, res)
+            except Exception as e:
+                print(f"[Register Notice] DB error ({e}), saving to local fallback.")
+                fb_id = save_to_fallback({
+                    "name": name,
+                    "mobile": mobile,
+                    "locality": locality,
+                    "username": username,
+                    "pref_date": pref_date,
+                    "pref_time": pref_time,
+                    "garments": garments
+                })
+                return self.send_json(200, {
+                    "success": True,
+                    "saved_locally": True,
+                    "booking_id": fb_id,
+                    "user": {"name": name, "mobile": mobile, "username": username, "locality": locality},
+                    "message": "Account registered (local queue). Configure MySQL password in db_config.json."
+                })
+
+        elif self.path == '/api/login':
+            content_length = int(self.headers.get('Content-Length', 0))
+            raw_body = self.rfile.read(content_length)
+            try:
+                data = json.loads(raw_body.decode('utf-8'))
+            except Exception as e:
+                return self.send_json(400, {"success": False, "error": f"Invalid JSON: {e}"})
+
+            username = data.get('username', '')
+            password = data.get('password', '')
+
+            try:
+                res = db.login_user(username, password)
+                status_code = 200 if res.get('success') else 401
+                return self.send_json(status_code, res)
+            except Exception as e:
+                return self.send_json(500, {
+                    "success": False,
+                    "error": f"Database login error: {e}. Please ensure password in db_config.json is set."
+                })
+
+        elif self.path == '/api/bookings':
             content_length = int(self.headers.get('Content-Length', 0))
             raw_body = self.rfile.read(content_length)
             try:
@@ -120,6 +194,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     pref_date=pref_date,
                     pref_time=pref_time,
                     garnments=garnments,
+                    garments=garnments,
                     shirt_size=shirt_size,
                     pant_size=pant_size
                 )
@@ -134,7 +209,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     "locality": locality,
                     "pref_date": pref_date,
                     "pref_time": pref_time,
-                    "garnments": garnments,
+                    "garments": garnments,
                     "shirt_size": shirt_size,
                     "pant_size": pant_size
                 })

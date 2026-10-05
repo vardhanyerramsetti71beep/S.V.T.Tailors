@@ -1,10 +1,16 @@
 import os
 import json
 import re
+import hashlib
 from datetime import datetime
 import pymysql
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'db_config.json')
+
+def hash_password(password):
+    if not password:
+        return ""
+    return hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
 
 def load_config():
     config = {
@@ -57,6 +63,20 @@ def test_connection():
             "hint": "Please set your MySQL password in 'db_config.json' or environment variables."
         }
 
+def ensure_user_auth_columns(cur, table_name="users"):
+    """Adds username and password columns to users table if they don't already exist"""
+    try:
+        cur.execute(f"DESC `{table_name}`;")
+        cols = [c['Field'].lower() for c in cur.fetchall()]
+        if 'username' not in cols:
+            cur.execute(f"ALTER TABLE `{table_name}` ADD COLUMN `username` VARCHAR(100) UNIQUE AFTER `mobile`;")
+            print(f"[DB] Added 'username' column to {table_name}")
+        if 'password' not in cols:
+            cur.execute(f"ALTER TABLE `{table_name}` ADD COLUMN `password` VARCHAR(255) AFTER `username`;")
+            print(f"[DB] Added 'password' column to {table_name}")
+    except Exception as e:
+        print(f"[DB Notice] ensure_user_auth_columns: {e}")
+
 def init_db():
     cfg = load_config()
     db_name = cfg["database"]
@@ -75,11 +95,15 @@ def init_db():
                 `user_id` INT PRIMARY KEY,
                 `name` VARCHAR(200) NOT NULL,
                 `mobile` VARCHAR(20) NOT NULL,
+                `username` VARCHAR(100) UNIQUE,
+                `password` VARCHAR(255),
                 `is_deleted` BOOLEAN DEFAULT FALSE,
                 `deletion_reason` VARCHAR(250) DEFAULT NULL,
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+
+        ensure_user_auth_columns(cur, "users")
 
         cur.execute("""
             CREATE TABLE IF NOT EXISTS `bookings` (
@@ -157,6 +181,179 @@ def get_garments_column_name(cur):
     cur.execute("DESC bookings;")
     cols = [c['Field'].lower() for c in cur.fetchall()]
     return "garments" if "garments" in cols else "garnments"
+
+def register_user(name, mobile, locality, username, password, pref_date=None, pref_time=None, garments=None, shirt_size=None, pant_size=None):
+    clean_name = str(name).strip() or "Valued Customer"
+    clean_mobile = re.sub(r'[^\d]', '', str(mobile))[-10:] or str(mobile).strip()
+    clean_username = str(username).strip().lower()
+    hashed_pwd = hash_password(password)
+    clean_locality = str(locality).strip() or "Governorpet, Vijayawada"
+
+    if not clean_username:
+        return {"success": False, "error": "Username is required"}
+    if not password:
+        return {"success": False, "error": "Password is required"}
+    if not clean_mobile:
+        return {"success": False, "error": "Mobile number is required"}
+
+    conn = get_connection(use_database=True)
+    try:
+        with conn.cursor() as cur:
+            users_table = get_users_table_name(cur)
+            garments_col = get_garments_column_name(cur)
+            ensure_user_auth_columns(cur, users_table)
+
+            # Check if username already taken
+            cur.execute(f"SELECT user_id FROM `{users_table}` WHERE `username` = %s LIMIT 1;", (clean_username,))
+            if cur.fetchone():
+                return {"success": False, "error": f"Username '{clean_username}' is already registered. Please choose another username or sign in."}
+
+            # Check if mobile exists
+            cur.execute(f"SELECT user_id FROM `{users_table}` WHERE `mobile` = %s LIMIT 1;", (clean_mobile,))
+            existing_user = cur.fetchone()
+
+            if existing_user:
+                user_id = existing_user["user_id"]
+                cur.execute(
+                    f"UPDATE `{users_table}` SET `name` = %s, `username` = %s, `password` = %s WHERE `user_id` = %s;",
+                    (clean_name, clean_username, hashed_pwd, user_id)
+                )
+            else:
+                cur.execute(f"SELECT COALESCE(MAX(`user_id`), 0) + 1 AS next_id FROM `{users_table}`;")
+                user_id = cur.fetchone()["next_id"]
+                cur.execute(
+                    f"""
+                    INSERT INTO `{users_table}` (`user_id`, `name`, `mobile`, `username`, `password`, `is_deleted`)
+                    VALUES (%s, %s, %s, %s, %s, FALSE);
+                    """,
+                    (user_id, clean_name, clean_mobile, clean_username, hashed_pwd)
+                )
+
+            booking_id = None
+            # If garments or preferred date/time are provided, record an initial booking
+            if garments or pref_date:
+                valid_date = parse_date(pref_date)
+                valid_time = parse_time_slot(pref_time)
+                clean_garments = str(garments or "Bespoke Gents Wear Consultation").strip()
+
+                cur.execute(
+                    f"""
+                    INSERT INTO `bookings` (`user_id`, `locality`, `pref_date`, `pref_time`, `{garments_col}`)
+                    VALUES (%s, %s, %s, %s, %s);
+                    """,
+                    (user_id, clean_locality, valid_date, valid_time, clean_garments)
+                )
+                booking_id = cur.lastrowid
+
+            # Save measurements if provided
+            if shirt_size or pant_size:
+                clean_shirt = str(shirt_size).strip()[:20] if shirt_size else None
+                clean_pant = str(pant_size).strip()[:20] if pant_size else None
+
+                cur.execute("SELECT measurement_id FROM `measurements` WHERE `user_id` = %s LIMIT 1;", (user_id,))
+                m_row = cur.fetchone()
+                if m_row:
+                    cur.execute(
+                        "UPDATE `measurements` SET `shirt_size` = COALESCE(%s, `shirt_size`), `pant_size` = COALESCE(%s, `pant_size`) WHERE `user_id` = %s;",
+                        (clean_shirt, clean_pant, user_id)
+                    )
+                else:
+                    cur.execute("SELECT COALESCE(MAX(`measurement_id`), 0) + 1 AS next_m_id FROM `measurements`;")
+                    next_m_id = cur.fetchone()["next_m_id"]
+                    cur.execute(
+                        "INSERT INTO `measurements` (`measurement_id`, `user_id`, `shirt_size`, `pant_size`) VALUES (%s, %s, %s, %s);",
+                        (next_m_id, user_id, clean_shirt, clean_pant)
+                    )
+
+        return {
+            "success": True,
+            "message": "Account created successfully!",
+            "user": {
+                "user_id": user_id,
+                "name": clean_name,
+                "mobile": clean_mobile,
+                "username": clean_username,
+                "locality": clean_locality
+            },
+            "booking_id": booking_id
+        }
+    finally:
+        conn.close()
+
+def login_user(username_or_mobile, password):
+    clean_identifier = str(username_or_mobile).strip()
+    hashed_pwd = hash_password(password)
+
+    if not clean_identifier or not password:
+        return {"success": False, "error": "Username/Mobile and password are required"}
+
+    conn = get_connection(use_database=True)
+    try:
+        with conn.cursor() as cur:
+            users_table = get_users_table_name(cur)
+            garments_col = get_garments_column_name(cur)
+            ensure_user_auth_columns(cur, users_table)
+
+            digits = re.sub(r'[^\d]', '', clean_identifier)
+            query_cond = "`username` = %s"
+            params = [clean_identifier.lower()]
+            if len(digits) >= 10:
+                query_cond += " OR `mobile` = %s OR `mobile` LIKE %s"
+                params.extend([digits, f"%{digits[-10:]}%"])
+
+            sql = f"""
+                SELECT `user_id`, `name`, `mobile`, `username`, `password`
+                FROM `{users_table}`
+                WHERE ({query_cond}) AND (`is_deleted` IS NULL OR `is_deleted` = FALSE)
+                LIMIT 1;
+            """
+            cur.execute(sql, tuple(params))
+            user = cur.fetchone()
+
+            if not user:
+                return {"success": False, "error": "No account found matching this username or phone number"}
+
+            stored_pwd = user.get("password") or ""
+            # Verify password (matches sha256 or plain text for dev convenience)
+            if stored_pwd != hashed_pwd and stored_pwd != password.strip():
+                return {"success": False, "error": "Incorrect password. Please try again."}
+
+            user_id = user["user_id"]
+
+            # Fetch user bookings
+            cur.execute(
+                f"""
+                SELECT `booking_id`, `locality`, DATE_FORMAT(`pref_date`, '%Y-%m-%d') AS pref_date,
+                       TIME_FORMAT(`pref_time`, '%h:%i %p') AS pref_time, `{garments_col}` AS garments
+                FROM `bookings`
+                WHERE `user_id` = %s
+                ORDER BY `booking_id` DESC;
+                """,
+                (user_id,)
+            )
+            bookings = cur.fetchall()
+
+            # Fetch user measurements
+            cur.execute(
+                "SELECT `shirt_size`, `pant_size`, DATE_FORMAT(`updated_at`, '%Y-%m-%d') as updated_at FROM `measurements` WHERE `user_id` = %s LIMIT 1;",
+                (user_id,)
+            )
+            measurements = cur.fetchone()
+
+            return {
+                "success": True,
+                "message": f"Welcome back, {user['name']}!",
+                "user": {
+                    "user_id": user["user_id"],
+                    "name": user["name"],
+                    "mobile": user["mobile"],
+                    "username": user.get("username") or user["mobile"]
+                },
+                "bookings": bookings,
+                "measurements": measurements
+            }
+    finally:
+        conn.close()
 
 def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, garments=None, shirt_size=None, pant_size=None):
     clean_mobile = re.sub(r'[^\d]', '', str(mobile))[-10:] or str(mobile).strip()

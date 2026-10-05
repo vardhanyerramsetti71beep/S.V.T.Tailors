@@ -58,9 +58,13 @@
         <li><a href="#guideSection">Measurement Guide</a></li>
         <li><a href="#trackerSection">Track Order</a></li>
         <li><a href="#locationSection">Location &amp; Hours</a></li>
+        <li><a href="login.html" style="color: var(--secondary); font-weight: 700;"><i class="fas fa-user-circle"></i> My Account / Login</a></li>
       </ul>
 
       <div class="nav-actions">
+        <a href="login.html" class="btn-track" id="navAccountBtn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); color: var(--secondary); border: 1.5px solid var(--secondary);" title="Customer Account &amp; Login">
+          <i class="fas fa-user-circle"></i> <span id="navAccountText">Account / Login</span>
+        </a>
         <button class="btn-track" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})">
           <i class="fas fa-search"></i> Track Order
         </button>
