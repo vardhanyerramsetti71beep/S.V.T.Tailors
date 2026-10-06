@@ -39,6 +39,7 @@
   </header>
 
   <!-- Main Navigation Bar -->
+  <!-- Main Navigation Bar -->
   <nav class="main-nav">
     <div class="nav-container">
       <a href="#" class="brand-logo" title="S. V. T. Tailors - Estd. 05-1-1965">
@@ -46,45 +47,35 @@
           <img src="public/images/logo_gentleman_badge.png" alt="S. V. T. Tailors Logo (Visiting Card Mascot)">
         </div>
         <div class="brand-text">
-          <h1>S. V. T. TAILORS <span class="est">Estd. 05-1-1965</span></h1>
-          <p>Diploma Holders • Y. Subba Rao &amp; Y.B. Srinivas</p>
+          <h1>S. V. T. TAILORS <span class="est">Estd. 1965</span></h1>
         </div>
       </a>
 
-      <!-- Desktop & Mobile Navigation Links -->
+      <!-- Clean, Focused Navigation Links -->
       <ul class="nav-menu" id="navMenu">
-        <li><a href="#catalogSection"><i class="fas fa-user-tie"></i> Bespoke Catalog</a></li>
-        <li><a href="#howItWorksSection"><i class="fas fa-list-ol"></i> How It Works</a></li>
-        <li><a href="#customizerSection"><i class="fas fa-cut"></i> Design &amp; Order</a></li>
-        <li><a href="#doorstepSection"><i class="fas fa-motorcycle"></i> Doorstep Visit</a></li>
-        <li><a href="#guideSection"><i class="fas fa-tape"></i> Measure Guide</a></li>
-        <li><a href="#trackerSection"><i class="fas fa-search"></i> Track Order</a></li>
-        <li><a href="#locationSection"><i class="fas fa-map-marker-alt"></i> Location</a></li>
-        <li><a href="login.html" style="color: var(--secondary-hover); font-weight: 700;"><i class="fas fa-user-circle"></i> My Account / Login</a></li>
+        <li><a href="#catalogSection">Catalog</a></li>
+        <li><a href="#customizerSection">Design &amp; Order</a></li>
+        <li><a href="#doorstepSection">Home Visit</a></li>
+        <li><a href="#trackerSection">Track Order</a></li>
+        <!-- Mobile Drawer Extended Links -->
+        <li class="nav-mobile-only"><a href="#howItWorksSection"><i class="fas fa-list-ol"></i> How It Works</a></li>
+        <li class="nav-mobile-only"><a href="#guideSection"><i class="fas fa-tape"></i> Measure Guide</a></li>
+        <li class="nav-mobile-only"><a href="#locationSection"><i class="fas fa-map-marker-alt"></i> Store Location</a></li>
+        <li class="nav-mobile-only"><a href="login.html" style="color: var(--secondary-hover); font-weight: 700;"><i class="fas fa-user-circle"></i> My Account / Login</a></li>
       </ul>
 
-      <!-- Action Items Cluster (Consistent Spacing) -->
+      <!-- Small & Clean Right Actions -->
       <div class="nav-actions">
         <!-- Customer Account / Login -->
-        <a href="login.html" class="btn-nav-account" id="navAccountBtn" title="Customer Account &amp; Past Orders">
-          <i class="fas fa-user-circle"></i> <span id="navAccountText">Account / Login</span>
+        <a href="login.html" class="btn-nav-account" id="navAccountBtn" title="Customer Account">
+          <i class="fas fa-user-circle"></i> <span id="navAccountText">Account</span>
         </a>
-
-        <!-- Track Order Quick Button -->
-        <button class="btn-track" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})" title="Track Stitched Order">
-          <i class="fas fa-search"></i> <span>Track Order</span>
-        </button>
 
         <!-- Order Bag / Cart Button -->
         <button class="btn-cart" onclick="toggleCartDrawer(true)" title="View Order Bag">
           <i class="fas fa-shopping-bag"></i>
           <span class="cart-count" id="cartBadge">0</span>
         </button>
-
-        <!-- Direct Phone Call Button -->
-        <a href="tel:9848133417" class="btn-call" title="Call Master Tailor">
-          <i class="fas fa-phone-alt"></i> <span>Call Master Tailor</span>
-        </a>
 
         <!-- Mobile Hamburger Toggle -->
         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu">
