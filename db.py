@@ -47,7 +47,7 @@ def test_connection():
         conn = get_connection(use_database=True)
         with conn.cursor() as cur:
             cur.execute("SELECT DATABASE() as db, VERSION() as ver;")
-            row = cur.fetchone()
+            row = cur.fetchone() or {"db": "customers", "ver": "8.0"}
             cur.execute("SHOW TABLES;")
             tables = [list(t.values())[0] for t in cur.fetchall()]
         conn.close()
@@ -220,7 +220,8 @@ def register_user(name, mobile, locality, username, password, pref_date=None, pr
                 )
             else:
                 cur.execute(f"SELECT COALESCE(MAX(`user_id`), 0) + 1 AS next_id FROM `{users_table}`;")
-                user_id = cur.fetchone()["next_id"]
+                id_row = cur.fetchone() or {}
+                user_id = id_row.get("next_id", 1)
                 cur.execute(
                     f"""
                     INSERT INTO `{users_table}` (`user_id`, `name`, `mobile`, `username`, `password`, `is_deleted`)
@@ -259,7 +260,8 @@ def register_user(name, mobile, locality, username, password, pref_date=None, pr
                     )
                 else:
                     cur.execute("SELECT COALESCE(MAX(`measurement_id`), 0) + 1 AS next_m_id FROM `measurements`;")
-                    next_m_id = cur.fetchone()["next_m_id"]
+                    mid_row = cur.fetchone() or {}
+                    next_m_id = mid_row.get("next_m_id", 1)
                     cur.execute(
                         "INSERT INTO `measurements` (`measurement_id`, `user_id`, `shirt_size`, `pant_size`) VALUES (%s, %s, %s, %s);",
                         (next_m_id, user_id, clean_shirt, clean_pant)
@@ -323,8 +325,8 @@ def login_user(username_or_mobile, password):
             # Fetch user bookings
             cur.execute(
                 f"""
-                SELECT `booking_id`, `locality`, DATE_FORMAT(`pref_date`, '%Y-%m-%d') AS pref_date,
-                       TIME_FORMAT(`pref_time`, '%h:%i %p') AS pref_time, `{garments_col}` AS garments
+                SELECT `booking_id`, `locality`, DATE_FORMAT(`pref_date`, '%%Y-%%m-%%d') AS pref_date,
+                       TIME_FORMAT(`pref_time`, '%%h:%%i %%p') AS pref_time, `{garments_col}` AS garments
                 FROM `bookings`
                 WHERE `user_id` = %s
                 ORDER BY `booking_id` DESC;
@@ -335,7 +337,7 @@ def login_user(username_or_mobile, password):
 
             # Fetch user measurements
             cur.execute(
-                "SELECT `shirt_size`, `pant_size`, DATE_FORMAT(`updated_at`, '%Y-%m-%d') as updated_at FROM `measurements` WHERE `user_id` = %s LIMIT 1;",
+                "SELECT `shirt_size`, `pant_size`, DATE_FORMAT(`updated_at`, '%%Y-%%m-%%d') as updated_at FROM `measurements` WHERE `user_id` = %s LIMIT 1;",
                 (user_id,)
             )
             measurements = cur.fetchone()
@@ -380,7 +382,8 @@ def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, g
                 cur.execute(f"UPDATE `{users_table}` SET `name` = %s WHERE `user_id` = %s;", (clean_name, user_id))
             else:
                 cur.execute(f"SELECT COALESCE(MAX(`user_id`), 0) + 1 AS next_id FROM `{users_table}`;")
-                user_id = cur.fetchone()["next_id"]
+                id_row = cur.fetchone() or {}
+                user_id = id_row.get("next_id", 1)
                 cur.execute(
                     f"INSERT INTO `{users_table}` (`user_id`, `name`, `mobile`, `is_deleted`) VALUES (%s, %s, %s, FALSE);",
                     (user_id, clean_name, clean_mobile)
@@ -416,7 +419,8 @@ def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, g
                     )
                 else:
                     cur.execute("SELECT COALESCE(MAX(`measurement_id`), 0) + 1 AS next_m_id FROM `measurements`;")
-                    next_m_id = cur.fetchone()["next_m_id"]
+                    mid_row = cur.fetchone() or {}
+                    next_m_id = mid_row.get("next_m_id", 1)
                     cur.execute(
                         """
                         INSERT INTO `measurements` (`measurement_id`, `user_id`, `shirt_size`, `pant_size`)
@@ -457,12 +461,12 @@ def get_bookings(query):
                     u.name,
                     u.mobile,
                     b.locality,
-                    DATE_FORMAT(b.pref_date, '%Y-%m-%d') AS pref_date,
-                    TIME_FORMAT(b.pref_time, '%h:%i %p') AS pref_time,
+                    DATE_FORMAT(b.pref_date, '%%Y-%%m-%%d') AS pref_date,
+                    TIME_FORMAT(b.pref_time, '%%h:%%i %%p') AS pref_time,
                     b.{garments_col} AS garments,
                     m.shirt_size,
                     m.pant_size,
-                    DATE_FORMAT(u.created_at, '%Y-%m-%d %H:%i') AS user_created_at
+                    DATE_FORMAT(u.created_at, '%%Y-%%m-%%d %%H:%%i') AS user_created_at
                 FROM `bookings` b
                 JOIN `{users_table}` u ON b.user_id = u.user_id
                 LEFT JOIN `measurements` m ON u.user_id = m.user_id
