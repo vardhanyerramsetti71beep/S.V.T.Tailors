@@ -316,13 +316,11 @@ def login_user(username_or_mobile, password):
                 return {"success": False, "error": "No account found matching this username or phone number"}
 
             stored_pwd = user.get("password") or ""
-            # Verify password (matches sha256 or plain text for dev convenience)
             if stored_pwd != hashed_pwd and stored_pwd != password.strip():
                 return {"success": False, "error": "Incorrect password. Please try again."}
 
             user_id = user["user_id"]
 
-            # Fetch user bookings
             cur.execute(
                 f"""
                 SELECT `booking_id`, `locality`, DATE_FORMAT(`pref_date`, '%%Y-%%m-%%d') AS pref_date,
@@ -335,7 +333,6 @@ def login_user(username_or_mobile, password):
             )
             bookings = cur.fetchall()
 
-            # Fetch user measurements
             cur.execute(
                 "SELECT `shirt_size`, `pant_size`, DATE_FORMAT(`updated_at`, '%%Y-%%m-%%d') as updated_at FROM `measurements` WHERE `user_id` = %s LIMIT 1;",
                 (user_id,)
@@ -373,7 +370,6 @@ def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, g
             users_table = get_users_table_name(cur)
             garments_col = get_garments_column_name(cur)
 
-            # 1. Find or create user in users table
             cur.execute(f"SELECT user_id FROM `{users_table}` WHERE `mobile` = %s LIMIT 1;", (clean_mobile,))
             user_row = cur.fetchone()
             
@@ -389,7 +385,6 @@ def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, g
                     (user_id, clean_name, clean_mobile)
                 )
 
-            # 2. Insert into bookings
             cur.execute(
                 f"""
                 INSERT INTO `bookings` (`user_id`, `locality`, `pref_date`, `pref_time`, `{garments_col}`)
@@ -399,7 +394,6 @@ def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, g
             )
             booking_id = cur.lastrowid
 
-            # 3. Insert or update measurements if provided
             if shirt_size or pant_size:
                 clean_shirt = str(shirt_size).strip()[:20] if shirt_size else None
                 clean_pant = str(pant_size).strip()[:20] if pant_size else None
