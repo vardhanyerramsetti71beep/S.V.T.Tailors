@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S. V. T. Tailors</title>
-  <meta name="description" content="S.V.T. Tailors - Over 60 years of master bespoke gents tailoring in Vijayawada. Custom suits, safari suits, formal shirts, trousers, wedding sherwanis, and doorstep measurement. Order online or visit Eluru Road, Governorpet.">
+  <title>S. V. T. Tailors | Master Gents Bespoke Atelier Since 1965 | Vijayawada</title>
+  <meta name="description" content="S. V. T. Tailors - Over 60 years of master bespoke gents tailoring in Vijayawada. Custom suits, safari suits, formal shirts, trousers, wedding sherwanis, and doorstep measurement. Near Ram Mandiram, Eluru Road, Governorpet.">
   
   <!-- Favicon (Gentleman Mascot from Visiting Card) -->
   <link rel="icon" type="image/png" href="public/images/favicon.png">
   
-  <!-- Fonts -->
+  <!-- Google Fonts: Inter & Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
@@ -17,16 +17,16 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Stylesheet -->
+  <!-- Master Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Top Announcement Bar -->
+  <!-- Top Announcement & Contact Bar -->
   <header class="top-bar">
     <div class="top-bar-marquee">
       <span class="top-badge">Estd. 05-1-1965</span>
-      <span>🎩 Diploma Holders: Y. Subba Rao &amp; Y.B. Srinivas</span>
+      <span>🎩 Diploma Master Tailors: Y. Subba Rao &amp; Y.B. Srinivas</span>
       <span style="color: var(--secondary);">•</span>
       <span>📍 Near Ram Mandiram, Eluru Road, Governorpet, Vijayawada</span>
       <span style="color: var(--secondary);">•</span>
@@ -34,11 +34,11 @@
     </div>
     <div class="top-bar-links">
       <a href="tel:9848133417"><i class="fas fa-phone-alt"></i> Cell / WhatsApp: 9848 133417</a>
-      <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank"><i class="fas fa-map-marker-alt"></i> Directions</a>
+      <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank"><i class="fas fa-map-marker-alt"></i> Store Directions</a>
     </div>
   </header>
 
-  <!-- Main Navigation -->
+  <!-- Main Navigation Bar -->
   <nav class="main-nav">
     <div class="nav-container">
       <a href="#" class="brand-logo" title="S. V. T. Tailors - Estd. 05-1-1965">
@@ -51,31 +51,43 @@
         </div>
       </a>
 
+      <!-- Desktop & Mobile Navigation Links -->
       <ul class="nav-menu" id="navMenu">
-        <li><a href="#catalogSection">Bespoke Catalog</a></li>
-        <li><a href="#customizerSection">Design &amp; Order</a></li>
-        <li><a href="#doorstepSection">Doorstep Visit</a></li>
-        <li><a href="#guideSection">Measurement Guide</a></li>
-        <li><a href="#trackerSection">Track Order</a></li>
-        <li><a href="#locationSection">Location &amp; Hours</a></li>
-        <li><a href="login.html" style="color: var(--secondary); font-weight: 700;"><i class="fas fa-user-circle"></i> My Account / Login</a></li>
+        <li><a href="#catalogSection"><i class="fas fa-user-tie"></i> Bespoke Catalog</a></li>
+        <li><a href="#howItWorksSection"><i class="fas fa-list-ol"></i> How It Works</a></li>
+        <li><a href="#customizerSection"><i class="fas fa-cut"></i> Design &amp; Order</a></li>
+        <li><a href="#doorstepSection"><i class="fas fa-motorcycle"></i> Doorstep Visit</a></li>
+        <li><a href="#guideSection"><i class="fas fa-tape"></i> Measure Guide</a></li>
+        <li><a href="#trackerSection"><i class="fas fa-search"></i> Track Order</a></li>
+        <li><a href="#locationSection"><i class="fas fa-map-marker-alt"></i> Location</a></li>
+        <li><a href="login.html" style="color: var(--secondary-hover); font-weight: 700;"><i class="fas fa-user-circle"></i> My Account / Login</a></li>
       </ul>
 
+      <!-- Action Items Cluster (Consistent Spacing) -->
       <div class="nav-actions">
-        <a href="login.html" class="btn-track" id="navAccountBtn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); color: var(--secondary); border: 1.5px solid var(--secondary);" title="Customer Account &amp; Login">
+        <!-- Customer Account / Login -->
+        <a href="login.html" class="btn-nav-account" id="navAccountBtn" title="Customer Account &amp; Past Orders">
           <i class="fas fa-user-circle"></i> <span id="navAccountText">Account / Login</span>
         </a>
-        <button class="btn-track" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})">
-          <i class="fas fa-search"></i> Track Order
+
+        <!-- Track Order Quick Button -->
+        <button class="btn-track" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})" title="Track Stitched Order">
+          <i class="fas fa-search"></i> <span>Track Order</span>
         </button>
+
+        <!-- Order Bag / Cart Button -->
         <button class="btn-cart" onclick="toggleCartDrawer(true)" title="View Order Bag">
           <i class="fas fa-shopping-bag"></i>
           <span class="cart-count" id="cartBadge">0</span>
         </button>
-        <a href="tel:9848133417" class="btn-call">
-          <i class="fas fa-phone-alt"></i> Call Master Tailor
+
+        <!-- Direct Phone Call Button -->
+        <a href="tel:9848133417" class="btn-call" title="Call Master Tailor">
+          <i class="fas fa-phone-alt"></i> <span>Call Master Tailor</span>
         </a>
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+
+        <!-- Mobile Hamburger Toggle -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu">
           <i class="fas fa-bars"></i>
         </button>
       </div>
@@ -99,10 +111,13 @@
 
         <div class="hero-cta-group">
           <button class="btn-primary-gold" onclick="document.getElementById('customizerSection').scrollIntoView({behavior:'smooth'})">
-            <img src="public/images/logo_gentleman_badge.png" class="btn-mini-logo" alt="SVT Logo"> Customize &amp; Order Online
+            <img src="public/images/logo_gentleman_badge.png" class="btn-mini-logo" alt="SVT Logo"> Design &amp; Order Online
           </button>
-          <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" class="btn-secondary-outline">
-            <i class="fas fa-compass"></i> Get Store Directions
+          <button class="btn-secondary-outline" onclick="document.getElementById('doorstepSection').scrollIntoView({behavior:'smooth'})" style="color: var(--white); border-color: rgba(255,255,255,0.4);">
+            <i class="fas fa-motorcycle"></i> Book Home Visit
+          </button>
+          <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" class="btn-secondary-outline" style="color: var(--secondary); border-color: var(--secondary);">
+            <i class="fas fa-compass"></i> Eluru Road Store
           </a>
         </div>
 
@@ -128,7 +143,7 @@
           <div style="display: flex; align-items: center; gap: 12px;">
             <img src="public/images/logo_gentleman_badge.png" alt="SVT Tailors Mascot" style="width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--secondary);">
             <div>
-              <h3>Place a Quick Order</h3>
+              <h3>Start Your Order</h3>
               <small style="color: var(--gray-600);">Gents Bespoke Stitching • Direct from Workshop</small>
             </div>
           </div>
@@ -163,7 +178,7 @@
             <i class="fas fa-motorcycle" style="color: var(--secondary-hover); font-size: 1.2rem;"></i>
             <div>
               <strong>Doorstep Service in Vijayawada:</strong>
-              <div style="color: var(--gray-600); font-size: 0.78rem;">Our master tailor visits your home for measurements & fabric pickup.</div>
+              <div style="color: var(--gray-600); font-size: 0.78rem;">Our master tailor visits your home for measurements &amp; fabric pickup.</div>
             </div>
           </div>
         </div>
@@ -196,20 +211,72 @@
         <div class="feature-icon"><i class="fas fa-bolt"></i></div>
         <div class="feature-info">
           <h4>Express Tatkal Service</h4>
-          <p>Urgent 24 to 48-hour delivery for weddings & events</p>
+          <p>Urgent 24 to 48-hour delivery for weddings &amp; events</p>
         </div>
       </div>
       <div class="feature-box">
         <div class="feature-icon"><i class="fas fa-truck"></i></div>
         <div class="feature-info">
-          <h4>Home Visit & Pickup</h4>
-          <p>Available across Governorpet, Benz Circle, MG Road & more</p>
+          <h4>Home Visit &amp; Pickup</h4>
+          <p>Available across Governorpet, Benz Circle, MG Road &amp; more</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Heritage & Workshop Story Section (Featuring Official Visiting Card) -->
+  <!-- How It Works: 3 Simple Steps (Clear & Understandable for Every Customer) -->
+  <section class="section section-cream" id="howItWorksSection">
+    <div class="section-header">
+      <span class="section-tag">Simple &amp; Seamless Process</span>
+      <h2 class="section-title">How To Order Your Bespoke Fit</h2>
+      <p class="section-subtitle">
+        We make custom gents tailoring effortless, transparent, and accessible to every patron in three easy steps.
+      </p>
+    </div>
+
+    <div class="how-it-works-grid">
+      <!-- Step 1 -->
+      <div class="how-step-card">
+        <span class="how-step-badge">Step 1</span>
+        <div class="how-step-icon"><i class="fas fa-cut"></i></div>
+        <h3 class="how-step-title">Choose Your Style &amp; Cloth</h3>
+        <p class="how-step-desc">
+          Select a suit, safari jacket, shirt, trouser, or sherwani. You can provide your own cloth or choose from our premium fabric selections.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="how-step-card">
+        <span class="how-step-badge">Step 2</span>
+        <div class="how-step-icon"><i class="fas fa-tape"></i></div>
+        <h3 class="how-step-title">Simple Sizing &amp; Measurements</h3>
+        <p class="how-step-desc">
+          Choose standard sizes (36-46), type your custom body inches, send a best-fitting sample garment, or book our free doorstep home visit!
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="how-step-card">
+        <span class="how-step-badge">Step 3</span>
+        <div class="how-step-icon"><i class="fas fa-check-double"></i></div>
+        <h3 class="how-step-title">Master Cut &amp; Delivered</h3>
+        <p class="how-step-desc">
+          Hand-drafted and stitched by Diploma Master Cutters with German fusing, steam-pressed, and delivered with our 100% Zero-Wrinkle Fit Guarantee.
+        </p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <button class="btn-primary-gold" onclick="document.getElementById('customizerSection').scrollIntoView({behavior:'smooth'})">
+        <i class="fas fa-sliders-h"></i> Customize Your Garment Now
+      </button>
+      <button class="btn-track" onclick="document.getElementById('doorstepSection').scrollIntoView({behavior:'smooth'})">
+        <i class="fas fa-home"></i> Schedule Doorstep Measurement
+      </button>
+    </div>
+  </section>
+
+  <!-- Heritage & Workshop Story Section (Official Visiting Card Credentials) -->
   <section class="section section-white">
     <div style="max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;">
       <div>
@@ -234,13 +301,13 @@
             </div>
             <span style="background: #e6f4ea; color: var(--emerald); font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full);">✓ Verified</span>
           </div>
-          <div style="font-size: 0.88rem; color: var(--gray-700); display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed var(--gray-300); padding-top: 10px;">
+          <div style="font-size: 0.88rem; color: var(--gray-700); display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed var(--gray-300); padding-top: 10px; flex-wrap: wrap; gap: 8px;">
             <div><i class="fas fa-mobile-alt" style="color: var(--emerald);"></i> <strong>Cell / WhatsApp:</strong> +91 9848 133417</div>
             <div style="color: var(--secondary-hover); font-weight: 600;"><i class="fas fa-map-marker-alt"></i> Near Ram Mandiram, Eluru Road</div>
           </div>
         </div>
 
-        <div style="display: flex; gap: 16px; align-items: center;">
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
           <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" class="btn-track" style="font-size: 0.88rem;">
             <i class="fas fa-directions"></i> Get Directions on Google Maps
           </a>
@@ -289,13 +356,13 @@
     <div class="catalog-grid" id="catalogGrid"></div>
   </section>
 
-  <!-- Interactive Live Garment Customizer & Price Estimator -->
+  <!-- Interactive Live Garment Customizer & Order Online -->
   <section class="section section-white" id="customizerSection">
     <div class="section-header">
       <span class="section-tag">Interactive Workshop</span>
-      <h2 class="section-title">Design Your Fit & Order Online</h2>
+      <h2 class="section-title">Design Your Fit &amp; Order Online</h2>
       <p class="section-subtitle">
-        Customize your styling, choose fabric, configure measurements, and place your order directly via WhatsApp or digital invoice in less than 60 seconds.
+        Customize your styling, choose fabric, configure measurements, and place your order directly via WhatsApp or digital summary in less than 60 seconds.
       </p>
     </div>
 
@@ -304,7 +371,7 @@
         <!-- Step 1: Garment & Fabric -->
         <div style="margin-bottom: 28px;">
           <h3 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <span class="step-num">1</span> Choose Garment & Fabric
+            <span class="step-num">1</span> Choose Garment &amp; Fabric
           </h3>
           <div class="form-group">
             <label for="customizerGarmentSelect">Garment Type</label>
@@ -318,12 +385,12 @@
         <!-- Step 2: Styling & Fit Profile -->
         <div style="margin-bottom: 28px; border-top: 1px solid var(--gray-300); padding-top: 24px;">
           <h3 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <span class="step-num">2</span> Styling & Silhouette Fit
+            <span class="step-num">2</span> Styling &amp; Silhouette Fit
           </h3>
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
             <div class="option-box fit-option-box selected" data-fit="Slim Bespoke Fit">
               <span class="title">Slim Bespoke</span>
-              <span class="sub">Tapered & sharp</span>
+              <span class="sub">Tapered &amp; sharp</span>
             </div>
             <div class="option-box fit-option-box" data-fit="Regular Classic Fit">
               <span class="title">Regular Classic</span>
@@ -331,7 +398,7 @@
             </div>
             <div class="option-box fit-option-box" data-fit="Executive Tailored">
               <span class="title">Executive Fit</span>
-              <span class="sub">Comfort waist & chest</span>
+              <span class="sub">Comfort waist &amp; chest</span>
             </div>
           </div>
         </div>
@@ -352,7 +419,7 @@
           <!-- Mode 1: Standard -->
           <div id="measureStandardSection">
             <div class="form-group" style="max-width: 320px;">
-              <label>Select Standard Size</label>
+              <label for="standardSizeSelect">Select Standard Size</label>
               <select id="standardSizeSelect">
                 <option value="36 (S)">Size 36 (Small - Chest 36-37")</option>
                 <option value="38 (M)">Size 38 (Medium - Chest 38-39")</option>
@@ -369,27 +436,27 @@
           <div id="measureCustomSection" style="display: none;">
             <div class="measurements-grid">
               <div class="measure-input-group">
-                <label>Chest / Bust (Inches)</label>
+                <label for="inputChest">Chest / Bust (Inches)</label>
                 <input type="number" id="inputChest" value="40" step="0.5">
               </div>
               <div class="measure-input-group">
-                <label>Waist (Inches)</label>
+                <label for="inputWaist">Waist (Inches)</label>
                 <input type="number" id="inputWaist" value="34" step="0.5">
               </div>
               <div class="measure-input-group">
-                <label>Shoulder Width (Inches)</label>
+                <label for="inputShoulder">Shoulder Width (Inches)</label>
                 <input type="number" id="inputShoulder" value="18" step="0.5">
               </div>
               <div class="measure-input-group">
-                <label>Sleeve Length (Inches)</label>
+                <label for="inputSleeve">Sleeve Length (Inches)</label>
                 <input type="number" id="inputSleeve" value="25" step="0.5">
               </div>
               <div class="measure-input-group">
-                <label>Garment Length (Inches)</label>
+                <label for="inputLength">Garment Length (Inches)</label>
                 <input type="number" id="inputLength" value="29" step="0.5">
               </div>
               <div class="measure-input-group">
-                <label>Trouser Inseam (Inches)</label>
+                <label for="inputInseam">Trouser Inseam (Inches)</label>
                 <input type="number" id="inputInseam" value="31" step="0.5">
               </div>
             </div>
@@ -404,7 +471,7 @@
               <i class="fas fa-tshirt" style="font-size: 2rem; color: var(--secondary);"></i>
               <div>
                 <strong>Replicate My Best-Fitting Garment:</strong>
-                <p style="font-size: 0.85rem; color: var(--gray-600);">You can send or drop off an existing favorite shirt, suit, safari jacket, or trouser to our Governorpet atelier. We will record its exact pattern and return it safely with your new order.</p>
+                <p style="font-size: 0.85rem; color: var(--gray-600); margin-top: 4px;">You can send or drop off an existing favorite shirt, suit, safari jacket, or trouser to our Governorpet atelier. We will record its exact pattern and return it safely with your new order.</p>
               </div>
             </div>
           </div>
@@ -415,7 +482,7 @@
               <i class="fas fa-motorcycle" style="font-size: 2rem; color: var(--primary);"></i>
               <div>
                 <strong>Master Tailor Doorstep Measurement:</strong>
-                <p style="font-size: 0.85rem; color: var(--gray-700);">Available across Vijayawada. Our master cutter will bring measuring tape and fabric swatches directly to your home or office.</p>
+                <p style="font-size: 0.85rem; color: var(--gray-700); margin-top: 4px;">Available across Vijayawada. Our master cutter will bring measuring tape and fabric swatches directly to your home or office.</p>
               </div>
             </div>
           </div>
@@ -424,7 +491,7 @@
         <!-- Step 4: Speed & Special Notes -->
         <div style="border-top: 1px solid var(--gray-300); padding-top: 24px;">
           <h3 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <span class="step-num">4</span> Delivery Speed & Instructions
+            <span class="step-num">4</span> Delivery Speed &amp; Instructions
           </h3>
 
           <div style="margin-bottom: 14px;">
@@ -432,7 +499,7 @@
               <input type="checkbox" id="expressCheckbox" style="width: 18px; height: 18px; accent-color: var(--secondary);">
               <div>
                 <strong style="color: #92400e;">⚡ Priority Express Tatkal Delivery (24-48 Hours)</strong>
-                <div style="font-size: 0.78rem; color: #b45309;">Priority cutting and express hand-finishing for weddings, trips & urgent events.</div>
+                <div style="font-size: 0.78rem; color: #b45309;">Priority cutting and express hand-finishing for weddings, trips &amp; urgent events.</div>
               </div>
             </label>
           </div>
@@ -478,7 +545,7 @@
             <i class="fab fa-whatsapp"></i> Quick WhatsApp Checkout
           </button>
           <small style="text-align: center; color: var(--gray-600); font-size: 0.78rem;">
-            <i class="fas fa-shield-alt"></i> Consultation & exact measurements verified before cutting.
+            <i class="fas fa-shield-alt"></i> Consultation &amp; exact measurements verified before cutting.
           </small>
         </div>
       </div>
@@ -515,7 +582,7 @@
       </div>
 
       <div class="guide-details">
-        <h3 id="guideSpotTitle" style="font-size: 1.5rem; margin-bottom: 12px; color: var(--primary);">Collar & Neck Measurement</h3>
+        <h3 id="guideSpotTitle" style="font-size: 1.5rem; margin-bottom: 12px; color: var(--primary);">Collar &amp; Neck Measurement</h3>
         <p id="guideSpotText" style="color: var(--gray-700); font-size: 1.05rem; line-height: 1.7; margin-bottom: 18px;">
           Wrap the measuring tape around the base of your neck where your shirt collar rests. Allow one finger space between the tape and neck for comfort.
         </p>
@@ -551,8 +618,8 @@
             We offer complimentary home and office measurement visits for bespoke suits, wedding sherwanis, festive kurtas, safari suits, and corporate trousers across Vijayawada. Our master artisan carries fabric swatches, collar samples, and takes precise body measurements in the comfort of your home or executive cabin.
           </p>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: #e2e8f0; font-size: 0.92rem;">
-            <li><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> Free fabric pickup & sample garment collection</li>
-            <li><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> Servicing Governorpet, Benz Circle, MG Road, Suryaraopet, Gunadala & more</li>
+            <li><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> Free fabric pickup &amp; sample garment collection</li>
+            <li><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> Servicing Governorpet, Benz Circle, MG Road, Suryaraopet, Gunadala &amp; more</li>
             <li><i class="fas fa-check" style="color: var(--secondary); margin-right: 8px;"></i> Convenient morning and evening weekend slots</li>
           </ul>
         </div>
@@ -626,7 +693,7 @@
   <!-- Live Order Tracker Simulator -->
   <section class="section section-cream" id="trackerSection">
     <div class="section-header">
-      <span class="section-tag">Transparency</span>
+      <span class="section-tag">Transparency &amp; Status</span>
       <h2 class="section-title">Track Your Order</h2>
       <p class="section-subtitle">
         Track your garment's journey through chalking, master hand-cutting, stitching, steam-pressing, and final delivery.
@@ -641,7 +708,7 @@
         </button>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;">
+      <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
         <span style="font-size: 0.8rem; color: var(--gray-600);">Try active demo orders:</span>
         <button onclick="document.getElementById('trackOrderInput').value='SVT-1965'; runTracking('SVT-1965')" style="background: none; border: none; color: var(--secondary-hover); font-weight: 700; cursor: pointer; text-decoration: underline;">#SVT-1965</button>
         <button onclick="document.getElementById('trackOrderInput').value='SVT-7821'; runTracking('SVT-7821')" style="background: none; border: none; color: var(--secondary-hover); font-weight: 700; cursor: pointer; text-decoration: underline;">#SVT-7821</button>
@@ -710,7 +777,7 @@
   <section class="section section-cream" id="locationSection">
     <div class="section-header">
       <span class="section-tag">Visit Our Workshop</span>
-      <h2 class="section-title">Store Location & Directions</h2>
+      <h2 class="section-title">Store Location &amp; Directions</h2>
       <p class="section-subtitle">
         Situated centrally on Eluru Road, Governorpet, right near the landmark Ram Mandiram.
       </p>
@@ -722,7 +789,7 @@
           <div class="info-item">
             <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
             <div class="info-text">
-              <h4></h4>Address</h4>
+              <h4>Atelier Address</h4>
               <p>Near Ram Mandiram, Eluru Road, Arundalpet, Governorpet, Vijayawada, Andhra Pradesh 520002</p>
               <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" style="color: var(--secondary-hover); font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;">
                 Open in Google Maps App <i class="fas fa-external-link-alt"></i>
@@ -742,14 +809,14 @@
           <div class="info-item">
             <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
             <div class="info-text">
-              <h4>Direct Telephone & WhatsApp</h4>
+              <h4>Direct Telephone &amp; WhatsApp</h4>
               <p><strong>Mobile:</strong> +91 98481 33417</p>
               <p><strong>WhatsApp Support:</strong> Available 24/7 for order updates</p>
             </div>
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
           <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" class="btn-primary-gold" style="flex: 1; justify-content: center; font-size: 0.95rem;">
             <i class="fas fa-directions"></i> Get Directions
           </a>
@@ -806,7 +873,7 @@
         <i class="fab fa-whatsapp"></i> Order via WhatsApp (Instant)
       </button>
       <button class="btn-checkout-direct" onclick="checkoutDirect()">
-        <i class="fas fa-receipt"></i> Place Order & Get Digital Summary
+        <i class="fas fa-receipt"></i> Place Order &amp; Get Digital Summary
       </button>
     </div>
   </aside>
@@ -876,16 +943,18 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul>
+          <li><a href="#howItWorksSection">How It Works (3 Steps)</a></li>
           <li><a href="#doorstepSection">Doorstep Measurement</a></li>
           <li><a href="#guideSection">How to Measure Guide</a></li>
           <li><a href="#trackerSection">Track Your Order</a></li>
           <li><a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank">Google Maps Location</a></li>
           <li><a href="#catalogSection">Bespoke Catalog</a></li>
+          <li><a href="login.html">Customer Login &amp; Portal</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4>Contact & Hours</h4>
+        <h4>Contact &amp; Hours</h4>
         <p style="font-size: 0.88rem; margin-bottom: 8px;">
           <strong>Address:</strong> Near Ram Mandiram, Eluru Road, Arundalpet, Governorpet, Vijayawada - 520002
         </p>
@@ -905,7 +974,7 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Master JavaScript Application -->
   <script src="app.js"></script>
 </body>
 </html>

@@ -865,6 +865,7 @@ async function runTracking(id) {
     </div>
   `;
 }
+window.runTracking = runTracking;
 
 function saveOrderForTracking(order) {
   let existing = JSON.parse(localStorage.getItem('svt_orders')) || [];
