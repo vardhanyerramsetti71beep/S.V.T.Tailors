@@ -175,7 +175,7 @@
           </div>
         </div>
 
-        <button class="btn-checkout-wa" onclick="window.open('https://wa.me/919848133417?text=Hello%20SVT%20Tailors,%20I%20would%20like%20to%20order%20bespoke%20stitching.%20Please%20guide%20me.', '_blank')">
+        <button class="btn-checkout-wa" onclick="openWhatsAppChat('919848133417', 'Hello SVT Tailors, I would like to order bespoke stitching. Please guide me.')">
           <i class="fab fa-whatsapp"></i> Quick Order via WhatsApp
         </button>
       </div>
@@ -882,7 +882,7 @@
 
   <!-- Floating Action Buttons -->
   <div class="floating-actions">
-    <a href="https://wa.me/919848133417?text=Hello%20SVT%20Tailors,%20I%20want%20to%20place%20a%20tailoring%20order." target="_blank" class="float-btn whatsapp" title="Chat on WhatsApp">
+    <a href="javascript:void(0)" onclick="openWhatsAppChat('919848133417', 'Hello SVT Tailors, I want to place a tailoring order.')" class="float-btn whatsapp" title="Chat on WhatsApp">
       <i class="fab fa-whatsapp"></i>
       <span class="float-tooltip">Chat on WhatsApp</span>
     </a>
@@ -913,7 +913,7 @@
           <strong>Cell / WhatsApp:</strong> +91 9848 133417
         </p>
         <div style="display: flex; gap: 12px; font-size: 1.2rem;">
-          <a href="https://wa.me/919848133417" target="_blank" style="color: #25d366;"><i class="fab fa-whatsapp"></i></a>
+          <a href="javascript:void(0)" onclick="openWhatsAppChat('919848133417', 'Hello SVT Tailors, I am inquiring from your website.')" style="color: #25d366;"><i class="fab fa-whatsapp"></i></a>
           <a href="https://maps.app.goo.gl/tUgrhQhHEAkgGBXQ7" target="_blank" style="color: var(--secondary);"><i class="fas fa-map-marker-alt"></i></a>
           <a href="tel:9848133417" style="color: var(--white);"><i class="fas fa-phone-alt"></i></a>
         </div>

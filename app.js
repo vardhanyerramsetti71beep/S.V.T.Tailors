@@ -566,19 +566,21 @@ window.checkoutWhatsApp = async function() {
   msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `_Please confirm my tailoring order and advise on fabric drop-off / doorstep measurement._`;
 
-  const encodedMsg = encodeURIComponent(msg);
-  const waUrl = `https://wa.me/${SVT_STATE.phone}?text=${encodedMsg}`;
-  
-  // Show Receipt Modal & Open WhatsApp
-  showReceiptModal({
+  const orderObj = {
     orderId,
     customerName,
     customerPhone,
     customerArea,
-    items: [...SVT_STATE.cart]
-  });
+    items: [...SVT_STATE.cart],
+    orderMessage: msg
+  };
+  SVT_STATE.lastOrder = orderObj;
 
-  window.open(waUrl, '_blank');
+  // Show Receipt Modal with active buttons
+  showReceiptModal(orderObj);
+
+  // Directly trigger WhatsApp Desktop / Phone application
+  openWhatsAppChat(SVT_STATE.phone, msg);
 };
 
 // Checkout Website Direct (Digital Receipt Summary)
@@ -620,12 +622,65 @@ window.checkoutDirect = async function() {
     }
   }
 
-  showReceiptModal({
+  const directMsg = `Hello S. V. T. Tailors, I submitted Order #${orderId} for ${customerName} (${customerArea}). Please confirm.`;
+  const orderObj = {
     orderId,
     customerName,
     customerPhone,
     customerArea,
-    items: [...SVT_STATE.cart]
+    items: [...SVT_STATE.cart],
+    orderMessage: directMsg
+  };
+  SVT_STATE.lastOrder = orderObj;
+
+  showReceiptModal(orderObj);
+};
+
+// Smart Universal WhatsApp Launcher
+window.openWhatsAppChat = function(phone, messageText) {
+  const cleanPhone = String(phone || SVT_STATE.phone || '919848133417').replace(/[^\d]/g, '');
+  const msg = messageText || 'Hello S. V. T. Tailors, I would like to inquire about bespoke tailoring.';
+  const encoded = encodeURIComponent(msg);
+
+  // Direct app scheme: opens WhatsApp Desktop on Windows or WhatsApp on phone without QR code!
+  const appScheme = `whatsapp://send?phone=${cleanPhone}&text=${encoded}`;
+  // Universal API URL fallback
+  const universalUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encoded}`;
+
+  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    window.location.href = appScheme;
+    setTimeout(() => {
+      window.open(universalUrl, '_blank');
+    }, 700);
+  } else {
+    // Desktop: Directly trigger whatsapp:// protocol
+    const link = document.createElement('a');
+    link.href = appScheme;
+    link.target = '_self';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};
+
+// Copy Order Details to Clipboard
+window.copyOrderDetails = function(btnEl, orderId) {
+  const order = SVT_STATE.lastOrder;
+  const msg = order?.orderMessage || `Hello SVT Tailors, I placed Order #${orderId}. Please confirm my bespoke stitching.`;
+  navigator.clipboard.writeText(msg).then(() => {
+    const originalText = btnEl.innerHTML;
+    btnEl.innerHTML = '<i class="fas fa-check" style="color: #166534;"></i> Copied to Clipboard! Paste in WhatsApp';
+    btnEl.style.borderColor = '#22c55e';
+    btnEl.style.color = '#166534';
+    setTimeout(() => {
+      btnEl.innerHTML = originalText;
+      btnEl.style.borderColor = '';
+      btnEl.style.color = '';
+    }, 2800);
+  }).catch(() => {
+    prompt('Copy your order message below:', msg);
   });
 };
 
@@ -638,17 +693,29 @@ function showReceiptModal(order) {
   // Save order to tracking storage
   saveOrderForTracking(order);
 
+  const msgText = order.orderMessage || `Hello SVT Tailors, I placed Order #${order.orderId}. Please confirm my bespoke stitching.`;
+  const encodedText = encodeURIComponent(msgText);
+
   content.innerHTML = `
     <div class="receipt-success-badge">
       <i class="fas fa-check"></i>
     </div>
-    <div style="text-align: center; margin-bottom: 20px;">
-      <h3 style="font-size: 1.5rem; color: var(--primary);">Tailoring Order Logged!</h3>
-      <p style="color: var(--secondary-hover); font-weight: 700; letter-spacing: 1px;">ORDER ID: #${order.orderId}</p>
+    <div style="text-align: center; margin-bottom: 16px;">
+      <h3 style="font-size: 1.5rem; color: var(--primary);">Tailoring Order Confirmed!</h3>
+      <p style="color: var(--secondary-hover); font-weight: 700; letter-spacing: 1px; margin: 4px 0;">ORDER ID: #${order.orderId}</p>
       <small style="color: var(--gray-600);">S. V. T. Tailors • Eluru Road, Governorpet, Vijayawada</small>
     </div>
 
-    <div style="background: var(--cream); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px; font-size: 0.88rem;">
+    <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; text-align: center;">
+      <div style="color: #166534; font-weight: 700; font-size: 0.95rem; margin-bottom: 2px;">
+        <i class="fas fa-check-circle"></i> Order #${order.orderId} Saved in Database!
+      </div>
+      <div style="font-size: 0.82rem; color: #15803d;">
+        Your order is recorded. Send details on WhatsApp below to finalize fabric &amp; measurements:
+      </div>
+    </div>
+
+    <div style="background: var(--cream); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 16px; font-size: 0.88rem;">
       <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
         <span><strong>Client:</strong> ${order.customerName}</span>
         <span><strong>Phone:</strong> ${order.customerPhone}</span>
@@ -657,10 +724,10 @@ function showReceiptModal(order) {
       <div style="margin-top: 6px;"><strong>Status:</strong> <span style="color: var(--emerald); font-weight: 700;">Order Logged • Fabric Assignment</span></div>
     </div>
 
-    <div style="margin-bottom: 20px;">
-      <h4 style="font-size: 0.95rem; margin-bottom: 10px; border-bottom: 1px solid var(--gray-300); padding-bottom: 6px;">Garment Summary (${order.items.length} Item${order.items.length !== 1 ? 's' : ''})</h4>
+    <div style="margin-bottom: 18px; max-height: 180px; overflow-y: auto;">
+      <h4 style="font-size: 0.95rem; margin-bottom: 8px; border-bottom: 1px solid var(--gray-300); padding-bottom: 4px;">Garment Summary (${order.items.length} Item${order.items.length !== 1 ? 's' : ''})</h4>
       ${order.items.map(item => `
-        <div style="font-size: 0.85rem; margin-bottom: 10px; background: #fff; padding: 10px; border: 1px solid var(--gray-300); border-radius: 6px;">
+        <div style="font-size: 0.85rem; margin-bottom: 8px; background: #fff; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: 6px;">
           <strong style="color: var(--primary); font-size: 0.92rem;">${item.title}</strong><br>
           <small style="color: var(--gray-600);">${item.fabric} • ${item.measurements}</small>
           ${item.notes ? `<br><small style="color: #64748b;"><em>Note: ${item.notes}</em></small>` : ''}
@@ -668,14 +735,28 @@ function showReceiptModal(order) {
       `).join('')}
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <a href="https://wa.me/${SVT_STATE.phone}?text=Hello%20SVT%20Tailors,%20I%20placed%20Order%20%23${order.orderId}.%20Please%20confirm." target="_blank" class="btn-checkout-wa" style="text-decoration: none;">
-        <i class="fab fa-whatsapp"></i> Chat with Master Tailor on WhatsApp
+    <div style="display: flex; flex-direction: column; gap: 9px;">
+      <!-- Option 1: Direct WhatsApp Desktop App -->
+      <a href="whatsapp://send?phone=${SVT_STATE.phone}&text=${encodedText}" class="btn-checkout-wa" style="text-decoration: none; justify-content: center; font-size: 0.95rem;">
+        <i class="fab fa-whatsapp"></i> Open in WhatsApp Desktop App
       </a>
-      <button class="btn-secondary-outline" style="color: var(--primary); border-color: var(--primary);" onclick="window.print()">
-        <i class="fas fa-print"></i> Print / Save Order Summary
+
+      <!-- Option 2: WhatsApp Web Universal -->
+      <a href="https://api.whatsapp.com/send?phone=${SVT_STATE.phone}&text=${encodedText}" target="_blank" class="btn-secondary-outline" style="text-decoration: none; justify-content: center; font-size: 0.88rem; color: #166534; border-color: #22c55e;">
+        <i class="fas fa-globe"></i> Open in WhatsApp Web (Browser)
+      </a>
+
+      <!-- Option 3: Copy Order Details -->
+      <button class="btn-secondary-outline" style="color: var(--primary); border-color: var(--secondary); justify-content: center; font-size: 0.88rem;" onclick="copyOrderDetails(this, '${order.orderId}')">
+        <i class="far fa-copy"></i> Copy Order Details (Paste in WhatsApp)
       </button>
-      <button class="btn-track" style="justify-content: center; width: 100%;" onclick="trackThisOrder('${order.orderId}')">
+
+      <!-- Option 4: Call Store Directly -->
+      <a href="tel:9848133417" class="btn-secondary-outline" style="color: var(--gray-700); border-color: var(--gray-300); text-decoration: none; justify-content: center; font-size: 0.85rem;">
+        <i class="fas fa-phone-alt"></i> Call Store Directly: +91 98481 33417
+      </a>
+
+      <button class="btn-track" style="justify-content: center; width: 100%; margin-top: 4px;" onclick="trackThisOrder('${order.orderId}')">
         <i class="fas fa-search"></i> Track Live Status of #${order.orderId}
       </button>
     </div>
@@ -836,7 +917,7 @@ async function runTracking(id) {
             <i class="fas fa-spinner fa-spin"></i> Active at Governorpet Atelier
           </p>
         </div>
-        <a href="https://wa.me/${SVT_STATE.phone}?text=Status%20update%20for%20order%20${displayId}" target="_blank" class="btn-track" style="font-size: 0.8rem;">
+        <a href="javascript:void(0)" onclick="openWhatsAppChat(SVT_STATE.phone, 'Status update for order ${displayId}')" class="btn-track" style="font-size: 0.8rem;">
           <i class="fab fa-whatsapp"></i> Inquire on WhatsApp
         </a>
       </div>
@@ -937,9 +1018,8 @@ function setupDoorstepForm() {
       ? `_Requesting master tailor outstation appointment or video measurement session._`
       : `_Please confirm appointment for master tailor home visit._`;
 
-    const waUrl = `https://wa.me/${SVT_STATE.phone}?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, '_blank');
-    showToast(bookingRef ? `Booking ${bookingRef} saved to database! Opening WhatsApp...` : 'Home visit booking requested! Opening WhatsApp...');
+    openWhatsAppChat(SVT_STATE.phone, text);
+    showToast(bookingRef ? `Booking #${bookingRef} confirmed & saved! Opening WhatsApp...` : 'Home visit booking requested! Opening WhatsApp...');
     form.reset();
     if (otherGroup) otherGroup.style.display = 'none';
   });
@@ -948,7 +1028,7 @@ function setupDoorstepForm() {
 // Quick WhatsApp Inquiry
 window.quickInquiry = function(garmentName) {
   const msg = `Hello S. V. T. Tailors, I would like to inquire about bespoke stitching for *${garmentName}*. Please let me know available slots, fabric suggestions, and turnaround time.`;
-  window.open(`https://wa.me/${SVT_STATE.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  openWhatsAppChat(SVT_STATE.phone, msg);
 };
 
 // Toast notification helper
