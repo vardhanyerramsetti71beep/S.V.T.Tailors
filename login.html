@@ -366,10 +366,10 @@
       <!-- Top Atelier Header -->
       <div class="auth-header">
         <div class="auth-header-crest">
-          <i class="fas fa-user-tie"></i>
+          <i class="fas fa-user-tie" id="authHeaderIcon"></i>
         </div>
-        <h2>Customer Sign In</h2>
-        <p>S. V. T. Bespoke Atelier • Vijayawada</p>
+        <h2 id="authHeaderTitle">Customer Sign In</h2>
+        <p id="authHeaderSub">S. V. T. Bespoke Atelier • Vijayawada</p>
       </div>
 
       <!-- Sign In Form Container -->
@@ -380,6 +380,7 @@
           <span id="alertMsg">Notification message</span>
         </div>
 
+        <!-- 1. SIGN IN FORM -->
         <form id="loginForm" onsubmit="handleLoginSubmit(event)">
           <div class="auth-form-group">
             <label for="loginIdentifier">Username or Mobile Number</label>
@@ -418,7 +419,7 @@
               <input type="checkbox" id="rememberMe" checked>
               <span>Remember me</span>
             </label>
-            <a href="javascript:void(0)" onclick="handleForgotPassword()">Forgot password?</a>
+            <a href="javascript:void(0)" onclick="handleForgotPassword()" style="color: var(--secondary-hover); font-weight: 600;">Forgot password?</a>
           </div>
 
           <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">
@@ -436,6 +437,66 @@
           <div class="atelier-support-badge">
             <i class="fas fa-shield-alt" style="color: var(--secondary);"></i>
             <span>Need assistance? <a href="whatsapp://send?phone=919848133417&text=Hello%20SVT%20Tailors,%20I%20need%20assistance%20with%20my%20account.">WhatsApp Helpline (+91 98481 33417)</a></span>
+          </div>
+        </form>
+
+        <!-- 2. DIRECT PASSWORD RESET FORM -->
+        <form id="resetPasswordForm" style="display: none;" onsubmit="handleResetPasswordSubmit(event)">
+          <div style="background: #f8fafc; border-left: 3px solid var(--secondary); padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 18px; font-size: 0.86rem; color: var(--gray-700); line-height: 1.5;">
+            <i class="fas fa-key" style="color: var(--secondary); margin-right: 4px;"></i>
+            Enter your registered <strong>10-digit mobile number</strong> or <strong>username</strong> to directly set a new password.
+          </div>
+
+          <div class="auth-form-group">
+            <label for="resetIdentifier">Registered Mobile Number or Username *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-mobile-alt input-icon"></i>
+              <input 
+                type="text" 
+                id="resetIdentifier" 
+                placeholder="e.g. 7386033417 or username" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="resetNewPassword">Choose New Password *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input 
+                type="password" 
+                id="resetNewPassword" 
+                placeholder="Enter new password (min. 4 characters)" 
+                required
+              >
+              <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('resetNewPassword', this)" title="Show/Hide Password">
+                <i class="far fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="resetConfirmPassword">Confirm New Password *</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-check-double input-icon"></i>
+              <input 
+                type="password" 
+                id="resetConfirmPassword" 
+                placeholder="Re-enter new password" 
+                required
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="btn-auth-submit" id="btnResetSubmit">
+            <i class="fas fa-sync-alt"></i> Reset &amp; Update Password
+          </button>
+
+          <div style="text-align: center; margin-top: 18px;">
+            <a href="javascript:void(0)" onclick="showLoginForm()" style="color: var(--primary); font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fas fa-arrow-left"></i> Back to Sign In
+            </a>
           </div>
         </form>
       </div>
@@ -516,7 +577,81 @@
     }
 
     function handleForgotPassword() {
-      alert("Password Reset Assistance:\n\nPlease contact our atelier helpline at +91 98481 33417 with your registered mobile number, and Master Tailor will assist you immediately.");
+      hideAlert();
+      const loginId = document.getElementById('loginIdentifier')?.value.trim();
+      if (loginId) {
+        document.getElementById('resetIdentifier').value = loginId;
+      }
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('resetPasswordForm').style.display = 'block';
+      document.getElementById('authHeaderIcon').className = 'fas fa-key';
+      document.getElementById('authHeaderTitle').textContent = 'Reset Password';
+      document.getElementById('authHeaderSub').textContent = 'Set your new password directly below';
+      document.getElementById('resetNewPassword').focus();
+    }
+
+    function showLoginForm() {
+      hideAlert();
+      document.getElementById('resetPasswordForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('authHeaderIcon').className = 'fas fa-user-tie';
+      document.getElementById('authHeaderTitle').textContent = 'Customer Sign In';
+      document.getElementById('authHeaderSub').textContent = 'S. V. T. Bespoke Atelier • Vijayawada';
+      document.getElementById('loginIdentifier').focus();
+    }
+
+    // Direct Password Reset Handler
+    async function handleResetPasswordSubmit(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const identifier = document.getElementById('resetIdentifier').value.trim();
+      const newPassword = document.getElementById('resetNewPassword').value;
+      const confirmPassword = document.getElementById('resetConfirmPassword').value;
+
+      if (!identifier) {
+        showAlert('Please enter your registered mobile number or username.');
+        return;
+      }
+      if (!newPassword || newPassword.length < 4) {
+        showAlert('New password must be at least 4 characters long.');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showAlert('Passwords do not match! Please check and re-enter.');
+        return;
+      }
+
+      const btn = document.getElementById('btnResetSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating in Database...';
+
+      try {
+        const res = await fetch('/api/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, new_password: newPassword })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showAlert(`<i class="fas fa-check-circle"></i> ${data.message || 'Password reset successfully!'} Directing to Sign In...`, 'success');
+          setTimeout(() => {
+            showLoginForm();
+            document.getElementById('loginIdentifier').value = data.identifier || identifier;
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginPassword').focus();
+            showAlert('<i class="fas fa-check-circle"></i> Your password is updated! Please sign in with your new password.', 'success');
+          }, 1200);
+        } else {
+          showAlert(data.error || 'Could not reset password. Please check your mobile or username.');
+        }
+      } catch (err) {
+        showAlert('Server connection error. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Reset &amp; Update Password';
+      }
     }
 
     // Login Form Submit Handler
@@ -620,7 +755,13 @@
         showAlert(decodeURIComponent(notice), 'warning');
       }
 
-      if (prefillId) {
+      if (urlParams.get('action') === 'reset' || urlParams.get('forgot') === 'true') {
+        handleForgotPassword();
+        if (prefillId) {
+          const rId = document.getElementById('resetIdentifier');
+          if (rId) rId.value = prefillId;
+        }
+      } else if (prefillId) {
         const idField = document.getElementById('loginIdentifier');
         if (idField) {
           idField.value = prefillId;

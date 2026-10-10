@@ -367,6 +367,54 @@ def login_user(username_or_mobile, password):
     finally:
         conn.close()
 
+def reset_password(username_or_mobile, new_password):
+    clean_identifier = str(username_or_mobile).strip()
+    if not clean_identifier:
+        return {"success": False, "error": "Registered mobile number or username is required"}
+    if not new_password or len(str(new_password).strip()) < 4:
+        return {"success": False, "error": "New password must be at least 4 characters long"}
+
+    hashed_pwd = hash_password(new_password)
+    digits = re.sub(r'[^\d]', '', clean_identifier)
+
+    conn = get_connection(use_database=True)
+    try:
+        with conn.cursor() as cur:
+            users_table = get_users_table_name(cur)
+            ensure_user_auth_columns(cur, users_table)
+
+            query_cond = "`username` = %s"
+            params = [clean_identifier.lower()]
+            if len(digits) >= 10:
+                query_cond += " OR `mobile` = %s OR `mobile` LIKE %s"
+                params.extend([digits, f"%{digits[-10:]}%"])
+
+            sql = f"""
+                SELECT `user_id`, `name`, `mobile`, `username`
+                FROM `{users_table}`
+                WHERE ({query_cond}) AND (`is_deleted` IS NULL OR `is_deleted` = FALSE)
+                LIMIT 1;
+            """
+            cur.execute(sql, tuple(params))
+            user = cur.fetchone()
+
+            if not user:
+                return {"success": False, "error": f"No account found matching '{clean_identifier}'."}
+
+            user_id = user["user_id"]
+            cur.execute(
+                f"UPDATE `{users_table}` SET `password` = %s WHERE `user_id` = %s;",
+                (hashed_pwd, user_id)
+            )
+
+        return {
+            "success": True,
+            "message": f"Password reset successfully for {user.get('name') or clean_identifier}!",
+            "identifier": user.get("username") or user.get("mobile")
+        }
+    finally:
+        conn.close()
+
 def save_booking(name, mobile, locality, pref_date, pref_time, garnments=None, garments=None, shirt_size=None, pant_size=None):
     clean_mobile = re.sub(r'[^\d]', '', str(mobile))[-10:] or str(mobile).strip()
     clean_name = str(name).strip() or "Valued Customer"

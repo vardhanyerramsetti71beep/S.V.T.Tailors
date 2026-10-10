@@ -6,6 +6,12 @@ import json
 import urllib.parse
 import webbrowser
 
+# Ensure stdout and stderr exist for background/headless run
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, 'w', encoding='utf-8')
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, 'w', encoding='utf-8')
+
 import db
 
 PORT = 8080
@@ -27,6 +33,12 @@ def save_to_fallback(data):
     return data['booking_id']
 
 class TailorHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        try:
+            super().log_message(format, *args)
+        except Exception:
+            pass
+
     def end_headers(self):
         # Enable caching-free headers for lively development
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -163,6 +175,27 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                 return self.send_json(500, {
                     "success": False,
                     "error": f"Database login error: {e}. Please ensure password in db_config.json is set."
+                })
+
+        elif self.path == '/api/reset-password':
+            content_length = int(self.headers.get('Content-Length', 0))
+            raw_body = self.rfile.read(content_length)
+            try:
+                data = json.loads(raw_body.decode('utf-8'))
+            except Exception as e:
+                return self.send_json(400, {"success": False, "error": f"Invalid JSON: {e}"})
+
+            identifier = data.get('identifier') or data.get('username') or data.get('mobile', '')
+            new_password = data.get('new_password') or data.get('password', '')
+
+            try:
+                res = db.reset_password(identifier, new_password)
+                status_code = 200 if res.get('success') else 400
+                return self.send_json(status_code, res)
+            except Exception as e:
+                return self.send_json(500, {
+                    "success": False,
+                    "error": f"Password reset error: {e}"
                 })
 
         elif self.path == '/api/bookings':
