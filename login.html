@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account &amp; Login • S. V. T. Tailors (Estd. 1965)</title>
+  <title>Sign In • S. V. T. Tailors (Estd. 1965)</title>
   <link rel="icon" type="image/png" href="public/images/favicon.png">
 
   <!-- Google Fonts & Font Awesome -->
@@ -16,104 +16,129 @@
 
   <style>
     .auth-page-wrapper {
-      min-height: calc(100vh - 120px);
+      min-height: calc(100vh - 80px);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 40px 16px;
-      background: radial-gradient(circle at 50% 10%, #162442 0%, #0b1528 100%);
+      background: radial-gradient(circle at 50% 15%, #182747 0%, #0b1528 100%);
     }
 
     .auth-card {
       background: #ffffff;
       border-radius: var(--radius-lg);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
       width: 100%;
-      max-width: 580px;
+      max-width: 480px;
       overflow: hidden;
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      animation: fadeInCard 0.35s ease;
+    }
+
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .auth-header {
       background: var(--primary);
       color: #ffffff;
-      padding: 28px 24px 20px;
+      padding: 32px 24px 24px;
       text-align: center;
       position: relative;
       border-bottom: 3px solid var(--secondary);
     }
 
-    .auth-header img {
-      width: 56px;
-      height: 56px;
+    .auth-header-crest {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       border: 2px solid var(--secondary);
-      margin-bottom: 8px;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--secondary);
+      font-size: 1.6rem;
     }
 
     .auth-header h2 {
       font-family: var(--font-serif);
-      font-size: 1.55rem;
+      font-size: 1.65rem;
       color: var(--secondary);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       letter-spacing: 0.5px;
     }
 
     .auth-header p {
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: #cbd5e1;
-    }
-
-    .auth-tabs {
-      display: flex;
-      background: #f1f5f9;
-      border-bottom: 1px solid var(--gray-300);
-    }
-
-    .auth-tab-btn {
-      flex: 1;
-      padding: 14px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 0.95rem;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: var(--gray-600);
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .auth-tab-btn.active {
-      color: var(--primary);
-      background: #ffffff;
-      border-bottom: 3px solid var(--secondary);
+      margin: 0;
     }
 
     .auth-body {
-      padding: 28px 24px;
+      padding: 30px 28px 24px;
+    }
+
+    .auth-alert {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .auth-alert.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .auth-alert.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .auth-alert.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
     }
 
     .auth-form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .auth-form-group label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       font-weight: 600;
       color: var(--gray-700);
       margin-bottom: 6px;
     }
 
-    .auth-form-group input,
-    .auth-form-group select,
-    .auth-form-group textarea {
+    .input-icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon-wrap i.input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--gray-500);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .input-icon-wrap input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 13px 44px 13px 40px;
       border: 1.5px solid var(--gray-300);
       border-radius: var(--radius-sm);
       font-size: 0.95rem;
@@ -122,24 +147,52 @@
       background: #ffffff;
     }
 
-    .auth-form-group input:focus,
-    .auth-form-group select:focus,
-    .auth-form-group textarea:focus {
+    .input-icon-wrap input:focus {
       outline: none;
       border-color: var(--secondary);
       box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
     }
 
-    .auth-form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    .toggle-pwd-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--gray-500);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 4px 6px;
     }
 
-    @media (max-width: 540px) {
-      .auth-form-row {
-        grid-template-columns: 1fr;
-      }
+    .toggle-pwd-btn:hover {
+      color: var(--primary);
+    }
+
+    .auth-options-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      font-size: 0.85rem;
+      color: var(--gray-600);
+    }
+
+    .auth-options-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .auth-options-row a {
+      color: var(--secondary-hover);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .auth-options-row a:hover {
+      text-decoration: underline;
     }
 
     .btn-auth-submit {
@@ -150,25 +203,69 @@
       border: none;
       border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.02rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-      margin-top: 20px;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
     }
 
     .btn-auth-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.45);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 24px 0 18px;
+      color: var(--gray-500);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--gray-300);
+    }
+
+    .auth-divider span {
+      padding: 0 12px;
+    }
+
+    .btn-register-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      border: 1.5px solid var(--secondary);
+      border-radius: var(--radius-sm);
+      background: #faf7f2;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .btn-register-link:hover {
+      background: var(--secondary);
+      color: var(--primary);
     }
 
     /* Customer Dashboard Profile View */
     .dashboard-profile {
       display: none;
+      padding: 24px;
     }
 
     .profile-banner {
@@ -180,246 +277,198 @@
       align-items: center;
       gap: 16px;
       margin-bottom: 20px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
     }
 
     .profile-avatar {
-      width: 56px;
-      height: 56px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
       background: var(--secondary);
       color: var(--primary);
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
-      font-weight: 800;
+      font-weight: 700;
       flex-shrink: 0;
     }
 
     .booking-card {
-      background: var(--cream);
-      border: 1px solid var(--gray-300);
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      border-left: 4px solid var(--secondary);
       border-radius: var(--radius-sm);
-      padding: 14px;
+      padding: 14px 16px;
       margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
 
     .booking-card-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 6px;
+      align-items: center;
       font-weight: 700;
+      font-size: 0.92rem;
       color: var(--primary);
+      margin-bottom: 6px;
     }
 
-    .auth-alert {
-      display: none;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      margin-bottom: 16px;
-      line-height: 1.4;
+    .atelier-support-badge {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .auth-alert.error {
-      background: #fef2f2;
-      color: #991b1b;
-      border: 1.5px solid #f87171;
-    }
-    .auth-alert.warning {
-      background: #fffbeb;
-      color: #92400e;
-      border: 1.5px solid #fcd34d;
-    }
-    .auth-alert.success {
-      background: #f0fdf4;
-      color: #166534;
-      border: 1.5px solid #86efac;
+
+    .atelier-support-badge a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Announcement Bar -->
-  <header class="top-bar">
-    <div class="top-bar-marquee">
-      <span>🧵 S. V. T. Tailors — Vijayawada’s Premier Bespoke Gents Atelier Since 1965</span>
-      <span style="color: var(--secondary);">•</span>
-      <span>📍 Ram Mandiram, Eluru Road, Governorpet</span>
-    </div>
-    <div class="top-bar-links">
-      <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Store</a>
-      <a href="tel:9848133417"><i class="fas fa-phone-alt"></i> Call: 9848 133417</a>
-    </div>
-  </header>
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand" style="text-decoration: none;">
+        <img src="public/images/favicon.png" alt="S.V.T. Logo" class="brand-logo" style="width:36px; height:36px;">
+        <div class="brand-text">
+          <h1 style="font-size: 1.15rem; margin: 0;">S. V. T. TAILORS <span class="est" style="font-size: 0.7rem; color: var(--secondary);">Estd. 1965</span></h1>
+        </div>
+      </a>
 
-  <!-- Auth Main View -->
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html#catalogSection">Catalog</a></li>
+        <li><a href="index.html#customizerSection">Design &amp; Order</a></li>
+        <li><a href="index.html#doorstepSection">Home Visit</a></li>
+        <li><a href="index.html#trackerSection">Track Order</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="tel:+919848133417" class="btn-nav-call" style="font-size: 0.85rem; color: var(--secondary); font-weight: 600; text-decoration: none;">
+          <i class="fas fa-phone-alt"></i> 98481 33417
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Main Wrapper -->
   <main class="auth-page-wrapper">
     <div class="auth-card">
-      <!-- Header -->
+      
+      <!-- Top Atelier Header -->
       <div class="auth-header">
-        <a href="index.html">
-          <img src="public/images/logo_gentleman_badge.png" alt="SVT Tailors Gentleman Mascot">
-        </a>
-        <h2>S. V. T. TAILORS</h2>
-        <p>Client Portal • Governorpet Atelier Since 1965</p>
+        <div class="auth-header-crest">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <h2>Customer Sign In</h2>
+        <p>S. V. T. Bespoke Atelier • Vijayawada</p>
       </div>
 
-      <!-- Feedback Alert -->
-      <div style="padding: 16px 24px 0;">
-        <div class="auth-alert" id="authAlert"></div>
-      </div>
-
-      <!-- Guest Auth Container (Defaults to Create Account) -->
-      <div id="guestAuthContainer">
-        <div class="auth-tabs">
-          <!-- 1. CREATE ACCOUNT TAB (Active by default) -->
-          <button class="auth-tab-btn active" id="tabRegisterBtn" onclick="switchTab('register')">
-            <i class="fas fa-user-plus"></i> Create Account
-          </button>
-          <!-- 2. SIGN IN TAB -->
-          <button class="auth-tab-btn" id="tabLoginBtn" onclick="switchTab('login')">
-            <i class="fas fa-sign-in-alt"></i> Sign In
-          </button>
+      <!-- Sign In Form Container -->
+      <div class="auth-body" id="guestAuthContainer">
+        <!-- Live Status Alert Box -->
+        <div class="auth-alert" id="authAlert">
+          <i class="fas fa-info-circle" id="alertIcon"></i>
+          <span id="alertMsg">Notification message</span>
         </div>
 
-        <div class="auth-body">
-          <!-- 1. CREATE ACCOUNT FORM (Displayed by default) -->
-          <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
-            <div class="auth-form-row">
-              <div class="auth-form-group">
-                <label for="regName">Full Name *</label>
-                <input type="text" id="regName" placeholder="e.g. Ramesh Kumar" required autofocus>
-              </div>
-              <div class="auth-form-group">
-                <label for="regPhone">Phone Number (Mobile) *</label>
-                <input type="tel" id="regPhone" placeholder="e.g. 98481 XXXXX" required>
-              </div>
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <div class="auth-form-group">
+            <label for="loginIdentifier">Username or Mobile Number</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-user input-icon"></i>
+              <input 
+                type="text" 
+                id="loginIdentifier" 
+                placeholder="e.g. 7386033417 or username" 
+                autocomplete="username"
+                required 
+                autofocus
+              >
             </div>
+          </div>
 
-            <div class="auth-form-group">
-              <label for="regArea">Your Locality / City in Vijayawada *</label>
-              <select id="regArea" onchange="handleRegAreaChange(this.value)" required>
-                <option value="Governorpet / Eluru Road">Governorpet / Eluru Road</option>
-                <option value="Arundalpet / Ram Mandiram">Arundalpet / Near Ram Mandiram</option>
-                <option value="Benz Circle">Benz Circle</option>
-                <option value="MG Road / Bandar Road">MG Road / Bandar Road</option>
-                <option value="Suryaraopet">Suryaraopet</option>
-                <option value="Moghalrajpuram">Moghalrajpuram</option>
-                <option value="Satyanarayanapuram">Satyanarayanapuram</option>
-                <option value="Bhavanipuram / One Town">Bhavanipuram / One Town</option>
-                <option value="Penamaluru / Poranki">Penamaluru / Poranki</option>
-                <option value="Mangalagiri / Tadepalli">Mangalagiri / Tadepalli</option>
-                <option value="Other">Other (Far from City / Outside Vijayawada)</option>
-              </select>
+          <div class="auth-form-group">
+            <label for="loginPassword">Account Password</label>
+            <div class="input-icon-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input 
+                type="password" 
+                id="loginPassword" 
+                placeholder="Enter your password" 
+                autocomplete="current-password"
+                required
+              >
+              <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('loginPassword', this)" title="Show/Hide Password">
+                <i class="far fa-eye"></i>
+              </button>
             </div>
+          </div>
 
-            <!-- Dynamic Outstation Area Input -->
-            <div class="auth-form-group" id="regOtherAreaBox" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px;">
-              <label for="regOtherAreaInput" style="color: #166534; font-weight: 700;">
-                <i class="fas fa-map-marked-alt"></i> Specify Your City / Town / Village:
-              </label>
-              <input type="text" id="regOtherAreaInput" placeholder="e.g. Guntur, Gannavaram, Tenali, Eluru, etc.">
-            </div>
+          <div class="auth-options-row">
+            <label>
+              <input type="checkbox" id="rememberMe" checked>
+              <span>Remember me</span>
+            </label>
+            <a href="javascript:void(0)" onclick="handleForgotPassword()">Forgot password?</a>
+          </div>
 
-            <div class="auth-form-row">
-              <div class="auth-form-group">
-                <label for="regDate">Preferred Fitting Date (Optional)</label>
-                <input type="date" id="regDate">
-              </div>
-              <div class="auth-form-group">
-                <label for="regTime">Preferred Time Slot</label>
-                <select id="regTime">
-                  <option value="Morning (10:00 AM - 1:00 PM)">Morning (10 AM - 1 PM)</option>
-                  <option value="Afternoon (2:00 PM - 5:00 PM)">Afternoon (2 PM - 5 PM)</option>
-                  <option value="Evening (5:00 PM - 8:30 PM)">Evening (5 PM - 8:30 PM)</option>
-                </select>
-              </div>
-            </div>
+          <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">
+            <i class="fas fa-lock-open"></i> Sign In to Account
+          </button>
 
-            <div class="auth-form-group">
-              <label for="regGarments">Garments to Stitch (Optional)</label>
-              <input type="text" id="regGarments" placeholder="e.g. 2 Suits, 4 Shirts, 1 Kurta Pajama">
-            </div>
+          <div class="auth-divider">
+            <span>New to S.V.T. Tailors?</span>
+          </div>
 
-            <div class="auth-form-row">
-              <div class="auth-form-group">
-                <label for="regUsername">Choose Username *</label>
-                <input type="text" id="regUsername" placeholder="e.g. ramesh_kumar" required>
-              </div>
-              <div class="auth-form-group">
-                <label for="regPassword">Set Password *</label>
-                <input type="password" id="regPassword" placeholder="Create password" required>
-              </div>
-            </div>
+          <a href="register.html" class="btn-register-link">
+            <i class="fas fa-user-plus"></i> Create an Account
+          </a>
 
-            <button type="submit" class="btn-auth-submit" id="btnRegisterSubmit">
-              <i class="fas fa-user-check"></i> Create Account &amp; Save to Database
-            </button>
-
-            <!-- Direct link to login if already created -->
-            <div style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--gray-600); background: #f8fafc; padding: 10px; border-radius: var(--radius-sm); border: 1px dashed var(--gray-300);">
-              Already have an account? 
-              <a href="javascript:void(0)" onclick="switchTab('login')" style="color: var(--secondary-hover); font-weight: 700; text-decoration: underline;">
-                Sign In here &rarr;
-              </a>
-            </div>
-          </form>
-
-          <!-- 2. LOGIN FORM (Hidden initially; shown if account already created) -->
-          <form id="loginForm" style="display: none;" onsubmit="handleLoginSubmit(event)">
-            <div class="auth-form-group">
-              <label for="loginIdentifier">Username or Mobile Number</label>
-              <input type="text" id="loginIdentifier" placeholder="Enter username or 10-digit mobile number" required>
-            </div>
-
-            <div class="auth-form-group">
-              <label for="loginPassword">Password</label>
-              <input type="password" id="loginPassword" placeholder="Enter your password" required>
-            </div>
-
-            <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">
-              <i class="fas fa-lock-open"></i> Sign In to Account
-            </button>
-
-            <div style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--gray-600); background: #f8fafc; padding: 10px; border-radius: var(--radius-sm); border: 1px dashed var(--gray-300);">
-              Don't have an account yet? 
-              <a href="javascript:void(0)" onclick="switchTab('register')" style="color: var(--secondary-hover); font-weight: 700; text-decoration: underline;">
-                Create an Account &rarr;
-              </a>
-            </div>
-          </form>
-        </div>
+          <div class="atelier-support-badge">
+            <i class="fas fa-shield-alt" style="color: var(--secondary);"></i>
+            <span>Connected to MySQL Database • Need help? <a href="https://wa.me/919848133417" target="_blank">WhatsApp Support</a></span>
+          </div>
+        </form>
       </div>
 
-      <!-- Logged In Dashboard View -->
-      <div id="userDashboardView" class="dashboard-profile" style="padding: 24px;">
+      <!-- Logged In Customer Dashboard View -->
+      <div id="userDashboardView" class="dashboard-profile">
         <div class="profile-banner">
-          <div class="profile-avatar" id="dashAvatar">R</div>
+          <div class="profile-avatar" id="dashAvatar">U</div>
           <div>
-            <h3 style="color: var(--secondary); margin-bottom: 2px;" id="dashName">Ramesh Kumar</h3>
-            <p style="font-size: 0.85rem; color: #cbd5e1;" id="dashMobile">+91 98481 XXXXX</p>
-            <small style="color: #94a3b8;" id="dashLocality">Governorpet, Vijayawada</small>
+            <h3 style="color: var(--secondary); margin-bottom: 2px;" id="dashName">Client Name</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;" id="dashMobile">+91 XXXXX XXXXX</p>
+            <small style="color: #94a3b8;" id="dashLocality">Vijayawada</small>
           </div>
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-          <a href="index.html#customizerSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 10px;">
+          <a href="index.html#customizerSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 11px;">
             <i class="fas fa-cut"></i> Order Custom Wear
           </a>
-          <a href="index.html#doorstepSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 10px; background: var(--primary-light); color: #fff;">
+          <a href="index.html#doorstepSection" class="btn-auth-submit" style="margin: 0; flex: 1; font-size: 0.88rem; padding: 11px; background: var(--primary-light); color: #fff;">
             <i class="fas fa-motorcycle"></i> Book Home Visit
           </a>
         </div>
 
-        <h4 style="font-size: 1.05rem; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-clipboard-list" style="color: var(--secondary);"></i> Your Bookings &amp; Fitting Orders (from MySQL)
+        <h4 style="font-size: 1.05rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-clipboard-list" style="color: var(--secondary);"></i> Your Active Orders &amp; Fittings (from MySQL)
         </h4>
         <div id="dashBookingsList">
-          <p style="font-size: 0.85rem; color: var(--gray-600);">Loading your bookings from database...</p>
+          <p style="font-size: 0.85rem; color: var(--gray-600);">Loading bookings from database...</p>
         </div>
 
         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--gray-300); display: flex; justify-content: space-between; align-items: center;">
-          <a href="index.html" style="font-size: 0.88rem; color: var(--primary); font-weight: 600;">
+          <a href="index.html" style="font-size: 0.88rem; color: var(--primary); font-weight: 600; text-decoration: none;">
             <i class="fas fa-arrow-left"></i> Return to Main Website
           </a>
           <button onclick="handleLogout()" style="background: none; border: 1.5px solid #ef4444; color: #ef4444; border-radius: var(--radius-sm); padding: 8px 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: var(--transition);">
@@ -427,133 +476,65 @@
           </button>
         </div>
       </div>
+
     </div>
   </main>
 
   <script>
-    // Tab switching: register or login
-    function switchTab(tab) {
-      const loginForm = document.getElementById('loginForm');
-      const regForm = document.getElementById('registerForm');
-      const tabLoginBtn = document.getElementById('tabLoginBtn');
-      const tabRegBtn = document.getElementById('tabRegisterBtn');
-      hideAlert();
-
-      if (tab === 'login') {
-        regForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        tabRegBtn.classList.remove('active');
-        tabLoginBtn.classList.add('active');
-        document.getElementById('loginIdentifier')?.focus();
-      } else {
-        // Default: Create Account
-        loginForm.style.display = 'none';
-        regForm.style.display = 'block';
-        tabLoginBtn.classList.remove('active');
-        tabRegBtn.classList.add('active');
-        document.getElementById('regName')?.focus();
-      }
-    }
-
-    function handleRegAreaChange(val) {
-      const otherBox = document.getElementById('regOtherAreaBox');
-      if (otherBox) {
-        otherBox.style.display = val === 'Other' ? 'block' : 'none';
-        if (val === 'Other') document.getElementById('regOtherAreaInput')?.focus();
-      }
-    }
-
     function showAlert(msg, type = 'error') {
-      const el = document.getElementById('authAlert');
-      if (!el) return;
-      el.className = `auth-alert ${type}`;
-      el.innerHTML = msg;
-      el.style.display = 'block';
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const box = document.getElementById('authAlert');
+      const text = document.getElementById('alertMsg');
+      const icon = document.getElementById('alertIcon');
+      box.className = `auth-alert ${type}`;
+      box.style.display = 'flex';
+      text.innerHTML = msg;
+
+      if (type === 'success') {
+        icon.className = 'fas fa-check-circle';
+      } else if (type === 'warning') {
+        icon.className = 'fas fa-exclamation-triangle';
+      } else {
+        icon.className = 'fas fa-exclamation-circle';
+      }
     }
 
     function hideAlert() {
-      const el = document.getElementById('authAlert');
-      if (el) el.style.display = 'none';
+      const box = document.getElementById('authAlert');
+      box.style.display = 'none';
     }
 
-    // Register Handler
-    async function handleRegisterSubmit(e) {
-      e.preventDefault();
-      hideAlert();
-
-      const name = document.getElementById('regName').value.trim();
-      const mobile = document.getElementById('regPhone').value.trim();
-      const area = document.getElementById('regArea').value;
-      const otherArea = document.getElementById('regOtherAreaInput')?.value.trim();
-      const locality = area === 'Other' ? (otherArea || 'Outside Vijayawada') : area;
-      const pref_date = document.getElementById('regDate').value;
-      const pref_time = document.getElementById('regTime').value;
-      const garments = document.getElementById('regGarments').value.trim();
-      const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
-
-      const btn = document.getElementById('btnRegisterSubmit');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving to MySQL Database...';
-
-      try {
-        const res = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name, mobile, locality, username, password,
-            pref_date, pref_time, garments
-          })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          showAlert('<i class="fas fa-check-circle"></i> Account created successfully in database! Logging you in...', 'success');
-          localStorage.setItem('svt_user', JSON.stringify(data.user));
-          setTimeout(() => {
-            renderDashboard(data.user, data.booking_id ? [{
-              booking_id: data.booking_id,
-              locality: locality,
-              pref_date: pref_date || 'Upcoming',
-              pref_time: pref_time,
-              garments: garments || 'Bespoke Fitting'
-            }] : []);
-          }, 800);
-        } else if (data.already_exists) {
-          // ACCOUNT IS ALREADY CREATED: DIRECT TO LOGIN!
-          showAlert(`<i class="fas fa-info-circle"></i> ${data.error || 'Account already created! Directing you to Sign In...'}`, 'warning');
-          setTimeout(() => {
-            switchTab('login');
-            const loginId = document.getElementById('loginIdentifier');
-            if (loginId) {
-              loginId.value = data.identifier || mobile || username;
-              document.getElementById('loginPassword')?.focus();
-            }
-          }, 1200);
-        } else {
-          showAlert(data.error || 'Could not register account. Please check details.');
-        }
-      } catch (err) {
-        // Fallback for offline mode
-        const localUser = { name, mobile, username, locality };
-        localStorage.setItem('svt_user', JSON.stringify(localUser));
-        showAlert('<i class="fas fa-check-circle"></i> Account registered locally! Syncing with database in background.', 'success');
-        renderDashboard(localUser, []);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-user-check"></i> Create Account &amp; Save to Database';
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'far fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'far fa-eye';
       }
     }
 
-    // Login Handler
+    function handleForgotPassword() {
+      alert("Password Reset Assistance:\n\nPlease contact our atelier helpline at +91 98481 33417 with your registered mobile number, and Master Tailor will assist you immediately.");
+    }
+
+    // Login Form Submit Handler
     async function handleLoginSubmit(e) {
       e.preventDefault();
       hideAlert();
 
       const identifier = document.getElementById('loginIdentifier').value.trim();
       const password = document.getElementById('loginPassword').value;
+
+      if (!identifier) {
+        showAlert('Please enter your username or registered mobile number.');
+        return;
+      }
+      if (!password) {
+        showAlert('Please enter your password.');
+        return;
+      }
 
       const btn = document.getElementById('btnLoginSubmit');
       btn.disabled = true;
@@ -563,10 +544,11 @@
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: identifier, password })
+          body: JSON.stringify({ username: identifier, password: password })
         });
 
         const data = await res.json();
+
         if (data.success) {
           showAlert(`<i class="fas fa-check-circle"></i> Welcome back, ${data.user.name}!`, 'success');
           localStorage.setItem('svt_user', JSON.stringify(data.user));
@@ -577,14 +559,14 @@
           showAlert(data.error || 'Invalid credentials. Please verify your username/mobile and password.');
         }
       } catch (err) {
-        showAlert('Server connection error. Please ensure server is running.');
+        showAlert('Could not connect to server. Please verify your connection.');
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-lock-open"></i> Sign In to Account';
       }
     }
 
-    // Render Dashboard
+    // Render Logged-in Customer Dashboard
     function renderDashboard(user, bookings = []) {
       document.getElementById('guestAuthContainer').style.display = 'none';
       const dash = document.getElementById('userDashboardView');
@@ -600,7 +582,7 @@
         bList.innerHTML = `
           <div style="background: var(--cream); padding: 18px; border-radius: var(--radius-sm); text-align: center; color: var(--gray-600); font-size: 0.88rem;">
             <i class="fas fa-calendar-check" style="font-size: 1.8rem; color: var(--secondary); margin-bottom: 8px; display: block;"></i>
-            No active bookings yet. Click below to schedule a master doorstep visit or customize garments!
+            No active orders found in MySQL. Schedule a master doorstep visit or customize garments below!
           </div>
         `;
       } else {
@@ -628,17 +610,30 @@
       window.location.reload();
     }
 
-    // ON PAGE LOAD: ALWAYS DEFAULT TO CREATE ACCOUNT (unless logged in or ?tab=login)
+    // On Load: Check prefill or existing session
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const tabParam = urlParams.get('tab') || urlParams.get('action');
+      const prefillId = urlParams.get('identifier') || urlParams.get('mobile') || urlParams.get('user');
+      const notice = urlParams.get('notice');
 
+      if (notice) {
+        showAlert(decodeURIComponent(notice), 'warning');
+      }
+
+      if (prefillId) {
+        const idField = document.getElementById('loginIdentifier');
+        if (idField) {
+          idField.value = prefillId;
+          document.getElementById('loginPassword')?.focus();
+        }
+      }
+
+      // Check if user is already logged in
       const saved = localStorage.getItem('svt_user');
-      if (saved && tabParam !== 'register' && tabParam !== 'new') {
+      if (saved && !prefillId && !urlParams.get('relogin')) {
         try {
           const user = JSON.parse(saved);
           renderDashboard(user);
-          // Fetch live bookings from MySQL
           fetch(`/api/track?q=${encodeURIComponent(user.mobile)}`)
             .then(r => r.json())
             .then(data => {
@@ -646,15 +641,7 @@
                 renderDashboard(user, data.bookings);
               }
             }).catch(() => {});
-          return;
         } catch(e) {}
-      }
-
-      // Default: SHOW CREATE ACCOUNT
-      if (tabParam === 'login' || tabParam === 'signin') {
-        switchTab('login');
-      } else {
-        switchTab('register');
       }
     });
   </script>

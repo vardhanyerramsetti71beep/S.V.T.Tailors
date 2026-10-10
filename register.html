@@ -357,9 +357,9 @@
             </button>
 
             <!-- Direct link to login if already created -->
-            <div style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--gray-600); background: #f8fafc; padding: 10px; border-radius: var(--radius-sm); border: 1px dashed var(--gray-300);">
+            <div style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--gray-600); background: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border: 1px dashed var(--gray-300);">
               Already have an account? 
-              <a href="javascript:void(0)" onclick="switchTab('login')" style="color: var(--secondary-hover); font-weight: 700; text-decoration: underline;">
+              <a href="login.html" style="color: var(--secondary-hover); font-weight: 700; text-decoration: underline;">
                 Sign In here &rarr;
               </a>
             </div>
@@ -525,13 +525,10 @@
           // ACCOUNT IS ALREADY CREATED: DIRECT TO LOGIN!
           showAlert(`<i class="fas fa-info-circle"></i> ${data.error || 'Account already created! Directing you to Sign In...'}`, 'warning');
           setTimeout(() => {
-            switchTab('login');
-            const loginId = document.getElementById('loginIdentifier');
-            if (loginId) {
-              loginId.value = data.identifier || mobile || username;
-              document.getElementById('loginPassword')?.focus();
-            }
-          }, 1200);
+            const redirectId = encodeURIComponent(data.identifier || mobile || username);
+            const noticeText = encodeURIComponent(data.error || 'Account already exists. Please enter your password to sign in.');
+            window.location.href = `login.html?identifier=${redirectId}&notice=${noticeText}`;
+          }, 1000);
         } else {
           showAlert(data.error || 'Could not register account. Please check details.');
         }
