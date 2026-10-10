@@ -123,7 +123,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     shirt_size=shirt_size,
                     pant_size=pant_size
                 )
-                status_code = 200 if res.get('success') else 400
+                status_code = 200 if (res.get('success') or res.get('already_exists')) else 400
                 return self.send_json(status_code, res)
             except Exception as e:
                 print(f"[Register Notice] DB error ({e}), saving to local fallback.")

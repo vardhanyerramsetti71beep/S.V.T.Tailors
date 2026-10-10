@@ -204,15 +204,28 @@ def register_user(name, mobile, locality, username, password, pref_date=None, pr
             ensure_user_auth_columns(cur, users_table)
 
             # Check if username already taken
-            cur.execute(f"SELECT user_id FROM `{users_table}` WHERE `username` = %s LIMIT 1;", (clean_username,))
-            if cur.fetchone():
-                return {"success": False, "error": f"Username '{clean_username}' is already registered. Please choose another username or sign in."}
+            cur.execute(f"SELECT user_id, username, mobile FROM `{users_table}` WHERE `username` = %s LIMIT 1;", (clean_username,))
+            user_by_uname = cur.fetchone()
+            if user_by_uname:
+                return {
+                    "success": False,
+                    "already_exists": True,
+                    "error": f"Username '{clean_username}' is already registered. Directing you to Sign In...",
+                    "identifier": clean_username
+                }
 
             # Check if mobile exists
-            cur.execute(f"SELECT user_id FROM `{users_table}` WHERE `mobile` = %s LIMIT 1;", (clean_mobile,))
+            cur.execute(f"SELECT user_id, username, password, mobile FROM `{users_table}` WHERE `mobile` = %s LIMIT 1;", (clean_mobile,))
             existing_user = cur.fetchone()
 
-            if existing_user:
+            if existing_user and existing_user.get("password"):
+                return {
+                    "success": False,
+                    "already_exists": True,
+                    "error": f"An account is already created for mobile {clean_mobile}! Directing you to Sign In...",
+                    "identifier": existing_user.get("username") or clean_mobile
+                }
+            elif existing_user:
                 user_id = existing_user["user_id"]
                 cur.execute(
                     f"UPDATE `{users_table}` SET `name` = %s, `username` = %s, `password` = %s WHERE `user_id` = %s;",
