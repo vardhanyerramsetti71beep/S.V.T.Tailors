@@ -353,7 +353,7 @@
             </div>
 
             <button type="submit" class="btn-auth-submit" id="btnRegisterSubmit">
-              <i class="fas fa-user-check"></i> Create Account &amp; Save to Database
+              <i class="fas fa-user-check"></i> Create Account
             </button>
 
             <!-- Direct link to login if already created -->
@@ -412,7 +412,7 @@
         </div>
 
         <h4 style="font-size: 1.05rem; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-clipboard-list" style="color: var(--secondary);"></i> Your Bookings &amp; Fitting Orders (from MySQL)
+          <i class="fas fa-clipboard-list" style="color: var(--secondary);"></i> Your Bookings &amp; Fitting Orders
         </h4>
         <div id="dashBookingsList">
           <p style="font-size: 0.85rem; color: var(--gray-600);">Loading your bookings from database...</p>
@@ -495,7 +495,7 @@
 
       const btn = document.getElementById('btnRegisterSubmit');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving to MySQL Database...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
 
       try {
         const res = await fetch('/api/register', {
@@ -510,7 +510,7 @@
         const data = await res.json();
 
         if (data.success) {
-          showAlert('<i class="fas fa-check-circle"></i> Account created successfully in database! Logging you in...', 'success');
+          showAlert('<i class="fas fa-check-circle"></i> Account created successfully! Logging you in...', 'success');
           localStorage.setItem('svt_user', JSON.stringify(data.user));
           setTimeout(() => {
             renderDashboard(data.user, data.booking_id ? [{
@@ -536,11 +536,11 @@
         // Fallback for offline mode
         const localUser = { name, mobile, username, locality };
         localStorage.setItem('svt_user', JSON.stringify(localUser));
-        showAlert('<i class="fas fa-check-circle"></i> Account registered locally! Syncing with database in background.', 'success');
+        showAlert('<i class="fas fa-check-circle"></i> Account registered successfully!', 'success');
         renderDashboard(localUser, []);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-user-check"></i> Create Account &amp; Save to Database';
+        btn.innerHTML = '<i class="fas fa-user-check"></i> Create Account';
       }
     }
 
@@ -605,7 +605,7 @@
           <div class="booking-card">
             <div class="booking-card-header">
               <span>Order #SVT-BK${b.booking_id}</span>
-              <span style="color: var(--emerald); font-size: 0.85rem;"><i class="fas fa-check-circle"></i> Active in MySQL</span>
+              <span style="color: var(--emerald); font-size: 0.85rem; font-weight: 600;"><i class="fas fa-check-circle"></i> Confirmed</span>
             </div>
             <div style="font-size: 0.85rem; color: var(--gray-700); margin-bottom: 4px;">
               <strong>Garments:</strong> ${b.garments || 'Bespoke Garments'}
