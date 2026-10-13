@@ -785,7 +785,7 @@
         try {
           const user = JSON.parse(saved);
           renderDashboard(user);
-          fetch(`/api/track?q=${encodeURIComponent(user.mobile)}`)
+          fetch(getApiEndpoint(`/api/track?q=${encodeURIComponent(user.mobile)}`))
             .then(r => r.json())
             .then(data => {
               if (data && data.bookings) {
