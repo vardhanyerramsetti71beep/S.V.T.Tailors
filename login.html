@@ -600,6 +600,16 @@
       document.getElementById('loginIdentifier').focus();
     }
 
+    function getApiEndpoint(endpoint) {
+      const isLocalDevServer = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                               window.location.port &&
+                               window.location.port !== '8080';
+      if (isLocalDevServer) {
+        return 'http://localhost:8080' + endpoint;
+      }
+      return endpoint;
+    }
+
     // Direct Password Reset Handler
     async function handleResetPasswordSubmit(e) {
       e.preventDefault();
