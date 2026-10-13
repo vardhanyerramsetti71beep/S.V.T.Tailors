@@ -637,7 +637,7 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating in Database...';
 
       try {
-        const res = await fetch('/api/reset-password', {
+        const res = await fetch(getApiEndpoint('/api/reset-password'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ identifier, new_password: newPassword })
@@ -686,7 +686,7 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Credentials...';
 
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(getApiEndpoint('/api/login'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: identifier, password: password })
