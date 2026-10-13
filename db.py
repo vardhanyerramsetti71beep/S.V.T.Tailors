@@ -52,19 +52,28 @@ def load_config():
             print(f"[DB Warning] Could not read db_config.json: {e}")
 
     # 3. Environment variables have HIGHEST priority
-    if os.getenv("MYSQL_HOST"):
-        config["host"] = os.getenv("MYSQL_HOST")
-    if os.getenv("MYSQL_PORT"):
+    host_env = os.getenv("MYSQL_HOST")
+    if host_env:
+        config["host"] = host_env
+
+    port_env = os.getenv("MYSQL_PORT")
+    if port_env is not None and port_env.strip():
         try:
-            config["port"] = int(os.getenv("MYSQL_PORT"))
-        except ValueError:
+            config["port"] = int(port_env.strip())
+        except (ValueError, TypeError):
             pass
-    if os.getenv("MYSQL_USER"):
-        config["user"] = os.getenv("MYSQL_USER")
-    if os.getenv("MYSQL_PASSWORD") is not None:
-        config["password"] = os.getenv("MYSQL_PASSWORD")
-    if os.getenv("MYSQL_DATABASE"):
-        config["database"] = os.getenv("MYSQL_DATABASE")
+
+    user_env = os.getenv("MYSQL_USER")
+    if user_env:
+        config["user"] = user_env
+
+    password_env = os.getenv("MYSQL_PASSWORD")
+    if password_env is not None:
+        config["password"] = password_env
+
+    database_env = os.getenv("MYSQL_DATABASE")
+    if database_env:
+        config["database"] = database_env
 
     return config
 
