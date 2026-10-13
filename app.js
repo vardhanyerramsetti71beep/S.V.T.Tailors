@@ -499,25 +499,26 @@ window.toggleCartDrawer = function(forceOpen = null) {
   }
 };
 
+// Helper to resolve correct API URL across environments (Vercel production vs local port)
+function getApiEndpoint(endpoint) {
+  const isLocalDevServer = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                           window.location.port &&
+                           window.location.port !== '8080';
+  if (isLocalDevServer) {
+    return 'http://localhost:8080' + endpoint;
+  }
+  return endpoint;
+}
+
 // Helper to save order/booking to MySQL backend
 async function syncBookingToDB(payload) {
   try {
-    let res = await fetch('/api/bookings', {
+    const url = getApiEndpoint('/api/bookings');
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    // If 404 and running on a local dev server (e.g. Live Server on port 5500), retry via Python server on 8080
-    if (res.status === 404 && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '8080') {
-      try {
-        res = await fetch('http://localhost:8080/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch (e) {}
-    }
 
     if (res.ok || res.status === 200 || res.status === 201) {
       const data = await res.json();
@@ -890,7 +891,7 @@ async function runTracking(id) {
   // Attempt to fetch live booking details from MySQL database
   let dbBooking = null;
   try {
-    const res = await fetch(`/api/track?q=${encodeURIComponent(id)}`);
+    const res = await fetch(getApiEndpoint(`/api/track?q=${encodeURIComponent(id)}`));
     if (res.ok) {
       const json = await res.json();
       if (json.bookings && json.bookings.length > 0) {

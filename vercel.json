@@ -3,7 +3,55 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/bookings",
+      "destination": "/api/bookings.py"
+    },
+    {
+      "source": "/api/bookings/",
+      "destination": "/api/bookings.py"
+    },
+    {
+      "source": "/api/register",
+      "destination": "/api/register.py"
+    },
+    {
+      "source": "/api/register/",
+      "destination": "/api/register.py"
+    },
+    {
+      "source": "/api/login",
+      "destination": "/api/login.py"
+    },
+    {
+      "source": "/api/login/",
+      "destination": "/api/login.py"
+    },
+    {
+      "source": "/api/reset-password",
+      "destination": "/api/reset-password.py"
+    },
+    {
+      "source": "/api/reset-password/",
+      "destination": "/api/reset-password.py"
+    },
+    {
+      "source": "/api/track",
+      "destination": "/api/track.py"
+    },
+    {
+      "source": "/api/track/",
+      "destination": "/api/track.py"
+    },
+    {
+      "source": "/api/db-test",
+      "destination": "/api/db-test.py"
+    },
+    {
+      "source": "/api/db_test",
+      "destination": "/api/db_test.py"
+    },
+    {
+      "source": "/api/(.*)",
       "destination": "/api/index.py"
     }
   ]
