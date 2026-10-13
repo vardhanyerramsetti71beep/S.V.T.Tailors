@@ -14,7 +14,7 @@ if sys.stderr is None:
 
 import db
 
-PORT = 8080
+PORT = int(os.getenv("PORT", 8080))
 
 class TailorHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -133,7 +133,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
             except Exception as e:
                 return self.send_json(500, {
                     "success": False,
-                    "error": f"Database login error: {e}. Please ensure password in db_config.json is set."
+                    "error": f"Database login error: {e}. Please ensure credentials in .env are set."
                 })
 
         elif self.path == '/api/reset-password':
@@ -220,10 +220,12 @@ if __name__ == '__main__':
             print(f" Notice checking tables: {e}")
     else:
         print(f" MySQL Notice: {db_test.get('error')}")
-        print("  Edit 'db_config.json' with your MySQL password to link live.")
+        print("  Edit '.env' with your MySQL credentials to link live.")
 
     httpd = None
-    for port_attempt in [8080, 8081, 8082, 3000, 5000, 8088]:
+    configured_port = int(os.getenv("PORT", 8080))
+    port_candidates = [configured_port] + [p for p in [8080, 8081, 8082, 3000, 5000, 8088] if p != configured_port]
+    for port_attempt in port_candidates:
         try:
             httpd = socketserver.TCPServer(("", port_attempt), TailorHandler)
             PORT = port_attempt

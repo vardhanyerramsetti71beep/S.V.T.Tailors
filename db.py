@@ -5,6 +5,26 @@ import hashlib
 from datetime import datetime
 import pymysql
 
+# Load .env environment variables automatically
+ENV_FILE = os.path.join(os.path.dirname(__file__), '.env')
+try:
+    from dotenv import load_dotenv
+    load_dotenv(ENV_FILE)
+except ImportError:
+    # Built-in lightweight fallback parser if python-dotenv is not installed
+    if os.path.exists(ENV_FILE):
+        try:
+            with open(ENV_FILE, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        k, v = k.strip(), v.strip().strip('"').strip("'")
+                        if k not in os.environ:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'db_config.json')
 
 def hash_password(password):
@@ -13,13 +33,16 @@ def hash_password(password):
     return hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
 
 def load_config():
+    # 1. Defaults
     config = {
-        "host": os.getenv("MYSQL_HOST", "localhost"),
-        "port": int(os.getenv("MYSQL_PORT", 3306)),
-        "user": os.getenv("MYSQL_USER", "root"),
-        "password": os.getenv("MYSQL_PASSWORD", ""),
-        "database": os.getenv("MYSQL_DATABASE", "customers")
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "",
+        "database": "customers"
     }
+
+    # 2. Check legacy db_config.json if it exists
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
@@ -27,6 +50,22 @@ def load_config():
                 config.update(file_config)
         except Exception as e:
             print(f"[DB Warning] Could not read db_config.json: {e}")
+
+    # 3. Environment variables have HIGHEST priority
+    if os.getenv("MYSQL_HOST"):
+        config["host"] = os.getenv("MYSQL_HOST")
+    if os.getenv("MYSQL_PORT"):
+        try:
+            config["port"] = int(os.getenv("MYSQL_PORT"))
+        except ValueError:
+            pass
+    if os.getenv("MYSQL_USER"):
+        config["user"] = os.getenv("MYSQL_USER")
+    if os.getenv("MYSQL_PASSWORD") is not None:
+        config["password"] = os.getenv("MYSQL_PASSWORD")
+    if os.getenv("MYSQL_DATABASE"):
+        config["database"] = os.getenv("MYSQL_DATABASE")
+
     return config
 
 def get_connection(use_database=True):
@@ -60,7 +99,7 @@ def test_connection():
         return {
             "success": False,
             "error": str(e),
-            "hint": "Please set your MySQL password in 'db_config.json' or environment variables."
+            "hint": "Please set your MySQL password in '.env' (MYSQL_PASSWORD) or environment variables."
         }
 
 def ensure_user_auth_columns(cur, table_name="users"):
