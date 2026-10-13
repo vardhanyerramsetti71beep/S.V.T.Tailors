@@ -563,7 +563,7 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Credentials...';
 
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(getApiEndpoint('/api/login'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: identifier, password })
@@ -642,7 +642,7 @@
           const user = JSON.parse(saved);
           renderDashboard(user);
           // Fetch live bookings from MySQL
-          fetch(`/api/track?q=${encodeURIComponent(user.mobile)}`)
+          fetch(getApiEndpoint(`/api/track?q=${encodeURIComponent(user.mobile)}`))
             .then(r => r.json())
             .then(data => {
               if (data && data.bookings) {
