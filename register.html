@@ -533,11 +533,7 @@
           showAlert(data.error || 'Could not register account. Please check details.');
         }
       } catch (err) {
-        // Fallback for offline mode
-        const localUser = { name, mobile, username, locality };
-        localStorage.setItem('svt_user', JSON.stringify(localUser));
-        showAlert('<i class="fas fa-check-circle"></i> Account registered successfully!', 'success');
-        renderDashboard(localUser, []);
+        showAlert('<i class="fas fa-exclamation-triangle"></i> Database error: Could not reach MySQL server. Please ensure the server is active.', 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-user-check"></i> Create Account';

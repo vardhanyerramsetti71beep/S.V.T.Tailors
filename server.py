@@ -15,22 +15,6 @@ if sys.stderr is None:
 import db
 
 PORT = 8080
-FALLBACK_FILE = os.path.join(os.path.dirname(__file__), 'local_bookings.json')
-
-def save_to_fallback(data):
-    records = []
-    if os.path.exists(FALLBACK_FILE):
-        try:
-            with open(FALLBACK_FILE, 'r', encoding='utf-8') as f:
-                records = json.load(f)
-        except Exception:
-            records = []
-    data['created_at_fallback'] = data.get('created_at') or 'now'
-    data['booking_id'] = len(records) + 1001
-    records.insert(0, data)
-    with open(FALLBACK_FILE, 'w', encoding='utf-8') as f:
-        json.dump(records, f, indent=2)
-    return data['booking_id']
 
 class TailorHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -82,22 +66,9 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                 results = db.get_bookings(q)
                 return self.send_json(200, {"success": True, "source": "mysql", "bookings": results})
             except Exception as e:
-                # Search fallback if DB is not reachable
-                fallback_results = []
-                if os.path.exists(FALLBACK_FILE):
-                    try:
-                        with open(FALLBACK_FILE, 'r', encoding='utf-8') as f:
-                            all_fb = json.load(f)
-                            for item in all_fb:
-                                if q in str(item.get('mobile', '')) or q == str(item.get('booking_id', '')) or q.lower() in str(item.get('name', '')).lower():
-                                    fallback_results.append(item)
-                    except Exception:
-                        pass
-                return self.send_json(200, {
-                    "success": True, 
-                    "source": "fallback", 
-                    "warning": f"MySQL offline: {str(e)}", 
-                    "bookings": fallback_results
+                return self.send_json(500, {
+                    "success": False, 
+                    "error": f"MySQL database error: {str(e)}"
                 })
 
         return super().do_GET()
@@ -138,22 +109,10 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                 status_code = 200 if (res.get('success') or res.get('already_exists')) else 400
                 return self.send_json(status_code, res)
             except Exception as e:
-                print(f"[Register Notice] DB error ({e}), saving to local fallback.")
-                fb_id = save_to_fallback({
-                    "name": name,
-                    "mobile": mobile,
-                    "locality": locality,
-                    "username": username,
-                    "pref_date": pref_date,
-                    "pref_time": pref_time,
-                    "garments": garments
-                })
-                return self.send_json(200, {
-                    "success": True,
-                    "saved_locally": True,
-                    "booking_id": fb_id,
-                    "user": {"name": name, "mobile": mobile, "username": username, "locality": locality},
-                    "message": "Account registered (local queue). Configure MySQL password in db_config.json."
+                print(f"[MySQL Register Error] {e}")
+                return self.send_json(500, {
+                    "success": False,
+                    "error": f"MySQL Database error: Could not register user ({str(e)})"
                 })
 
         elif self.path == '/api/login':
@@ -219,7 +178,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                 return self.send_json(400, {"success": False, "error": "Mobile number is required"})
 
             try:
-                # Try saving directly to MySQL customers database
+                # Save directly to MySQL customers database
                 res = db.save_booking(
                     name=name,
                     mobile=mobile,
@@ -234,23 +193,10 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                 print(f"[MySQL Success] Saved booking #{res['booking_id']} for user #{res['user_id']} ({name})")
                 return self.send_json(200, res)
             except Exception as e:
-                # Fallback storage so no customer order is ever dropped
-                print(f"[MySQL Notice] Could not save directly to MySQL ({e}). Saving to local cache.")
-                fb_id = save_to_fallback({
-                    "name": name,
-                    "mobile": mobile,
-                    "locality": locality,
-                    "pref_date": pref_date,
-                    "pref_time": pref_time,
-                    "garments": garnments,
-                    "shirt_size": shirt_size,
-                    "pant_size": pant_size
-                })
-                return self.send_json(200, {
-                    "success": True,
-                    "saved_locally": True,
-                    "booking_id": fb_id,
-                    "warning": f"Saved in local queue. Please configure password in db_config.json: {e}"
+                print(f"[MySQL Booking Error] Could not save directly to MySQL: {e}")
+                return self.send_json(500, {
+                    "success": False,
+                    "error": f"MySQL Database error: Could not save booking ({str(e)})"
                 })
 
         return self.send_json(404, {"error": "Not Found"})

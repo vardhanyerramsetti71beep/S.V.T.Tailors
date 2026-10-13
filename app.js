@@ -6,6 +6,13 @@
  * Diploma Holders: Y. Subba Rao & Y.B. Srinivas
  */
 
+// Clean up local storage so all customer records & orders are stored strictly in MySQL database
+try {
+  localStorage.removeItem('svt_orders');
+  localStorage.removeItem('ms_pickles_cust');
+  localStorage.removeItem('ms_pickles_cart');
+} catch (e) {}
+
 // Global State
 const SVT_STATE = {
   cart: JSON.parse(localStorage.getItem('svt_cart')) || [],
@@ -690,8 +697,7 @@ function showReceiptModal(order) {
   const content = document.getElementById('receiptContent');
   if (!modalBackdrop || !content) return;
 
-  // Save order to tracking storage
-  saveOrderForTracking(order);
+  // Order is strictly stored in MySQL database via /api/bookings
 
   const msgText = order.orderMessage || `Hello SVT Tailors, I placed Order #${order.orderId}. Please confirm my bespoke stitching.`;
   const encodedText = encodeURIComponent(msgText);
@@ -948,11 +954,6 @@ async function runTracking(id) {
 }
 window.runTracking = runTracking;
 
-function saveOrderForTracking(order) {
-  let existing = JSON.parse(localStorage.getItem('svt_orders')) || [];
-  existing.unshift(order);
-  localStorage.setItem('svt_orders', JSON.stringify(existing.slice(0, 10)));
-}
 
 // Doorstep Measurement Form in Vijayawada & Outstation
 function setupDoorstepForm() {
