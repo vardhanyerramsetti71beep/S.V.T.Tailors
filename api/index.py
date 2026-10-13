@@ -37,11 +37,20 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
+        path = parsed.path.rstrip('/')
 
-        if path.endswith('/api/db-test') or path == '/api/db-test':
+        if path.endswith('/api/db-test') or path == '/api/db-test' or path.endswith('/api/db_test') or path == '/api/db_test':
             res = db.test_connection()
             return self.send_json(200 if res['success'] else 500, res)
+
+        elif path.endswith('/api/bookings') or path == '/api/bookings':
+            query_params = urllib.parse.parse_qs(parsed.query)
+            q = query_params.get('q', [''])[0].strip()
+            try:
+                results = db.get_bookings(q)
+                return self.send_json(200, {"success": True, "source": "mysql", "bookings": results})
+            except Exception as e:
+                return self.send_json(500, {"success": False, "error": str(e)})
 
         elif path.endswith('/api/track') or path == '/api/track':
             query_params = urllib.parse.parse_qs(parsed.query)
@@ -62,7 +71,7 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
+        path = parsed.path.rstrip('/')
         content_length = int(self.headers.get('Content-Length', 0))
         raw_body = self.rfile.read(content_length)
         try:
@@ -157,7 +166,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     shirt_size=shirt_size,
                     pant_size=pant_size
                 )
-                return self.send_json(200, res)
+                return self.send_json(201, res)
             except Exception as e:
                 return self.send_json(500, {
                     "success": False,

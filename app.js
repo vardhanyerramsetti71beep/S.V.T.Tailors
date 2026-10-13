@@ -502,14 +502,28 @@ window.toggleCartDrawer = function(forceOpen = null) {
 // Helper to save order/booking to MySQL backend
 async function syncBookingToDB(payload) {
   try {
-    const res = await fetch('/api/bookings', {
+    let res = await fetch('/api/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) {
+
+    // If 404 and running on a local dev server (e.g. Live Server on port 5500), retry via Python server on 8080
+    if (res.status === 404 && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '8080') {
+      try {
+        res = await fetch('http://localhost:8080/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {}
+    }
+
+    if (res.ok || res.status === 200 || res.status === 201) {
       const data = await res.json();
       return data;
+    } else {
+      console.error('[API Error] Booking failed with status:', res.status);
     }
   } catch (err) {
     console.log('[API Notice] DB sync queued locally or server offline:', err);

@@ -50,11 +50,20 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
+        path = parsed.path.rstrip('/')
 
         if path == '/api/db-test':
             res = db.test_connection()
             return self.send_json(200 if res['success'] else 500, res)
+
+        elif path == '/api/bookings':
+            query_params = urllib.parse.parse_qs(parsed.query)
+            q = query_params.get('q', [''])[0].strip()
+            try:
+                results = db.get_bookings(q)
+                return self.send_json(200, {"success": True, "source": "mysql", "bookings": results})
+            except Exception as e:
+                return self.send_json(500, {"success": False, "error": str(e)})
 
         elif path == '/api/track':
             query_params = urllib.parse.parse_qs(parsed.query)
@@ -74,7 +83,10 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if self.path == '/api/register':
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip('/')
+
+        if path == '/api/register':
             content_length = int(self.headers.get('Content-Length', 0))
             raw_body = self.rfile.read(content_length)
             try:
@@ -106,7 +118,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     shirt_size=shirt_size,
                     pant_size=pant_size
                 )
-                status_code = 200 if (res.get('success') or res.get('already_exists')) else 400
+                status_code = 201 if res.get('success') else (200 if res.get('already_exists') else 400)
                 return self.send_json(status_code, res)
             except Exception as e:
                 print(f"[MySQL Register Error] {e}")
@@ -115,7 +127,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     "error": f"MySQL Database error: Could not register user ({str(e)})"
                 })
 
-        elif self.path == '/api/login':
+        elif path == '/api/login':
             content_length = int(self.headers.get('Content-Length', 0))
             raw_body = self.rfile.read(content_length)
             try:
@@ -136,7 +148,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     "error": f"Database login error: {e}. Please ensure credentials in .env are set."
                 })
 
-        elif self.path == '/api/reset-password':
+        elif path == '/api/reset-password':
             content_length = int(self.headers.get('Content-Length', 0))
             raw_body = self.rfile.read(content_length)
             try:
@@ -157,7 +169,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     "error": f"Password reset error: {e}"
                 })
 
-        elif self.path == '/api/bookings':
+        elif path == '/api/bookings':
             content_length = int(self.headers.get('Content-Length', 0))
             raw_body = self.rfile.read(content_length)
             try:
@@ -191,7 +203,7 @@ class TailorHandler(http.server.SimpleHTTPRequestHandler):
                     pant_size=pant_size
                 )
                 print(f"[MySQL Success] Saved booking #{res['booking_id']} for user #{res['user_id']} ({name})")
-                return self.send_json(200, res)
+                return self.send_json(201, res)
             except Exception as e:
                 print(f"[MySQL Booking Error] Could not save directly to MySQL: {e}")
                 return self.send_json(500, {
