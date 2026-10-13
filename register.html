@@ -477,6 +477,16 @@
       if (el) el.style.display = 'none';
     }
 
+    function getApiEndpoint(endpoint) {
+      const isLocalDevServer = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                               window.location.port &&
+                               window.location.port !== '8080';
+      if (isLocalDevServer) {
+        return 'http://localhost:8080' + endpoint;
+      }
+      return endpoint;
+    }
+
     // Register Handler
     async function handleRegisterSubmit(e) {
       e.preventDefault();
@@ -498,7 +508,7 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
 
       try {
-        const res = await fetch('/api/register', {
+        const res = await fetch(getApiEndpoint('/api/register'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
